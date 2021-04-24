@@ -15,14 +15,14 @@ namespace MagicStorage.Components
 {
     public class TEStorageHeart : TEStorageCenter
     {
-        private ReaderWriterLockSlim itemsLock = new ReaderWriterLockSlim();
+        private ReaderWriterLockSlim ItemsLock = new ReaderWriterLockSlim();
         public List<Point16> remoteAccesses = new List<Point16>();
         private int updateTimer = 60;
         private int compactStage = 0;
 
         public override bool ValidTile(Tile tile)
         {
-            return tile.type == mod.TileType("StorageHeart") && tile.frameX == 0 && tile.frameY == 0;
+            return tile.type == ModContent.TileType<StorageHeart>() && tile.frameX == 0 && tile.frameY == 0;
         }
 
         public override TEStorageHeart GetHeart()
@@ -45,22 +45,22 @@ namespace MagicStorage.Components
 
         public void EnterReadLock()
         {
-            itemsLock.EnterReadLock();
+            ItemsLock.EnterReadLock();
         }
 
         public void ExitReadLock()
         {
-            itemsLock.ExitReadLock();
+            ItemsLock.ExitReadLock();
         }
 
         public void EnterWriteLock()
         {
-            itemsLock.EnterWriteLock();
+            ItemsLock.EnterWriteLock();
         }
 
         public void ExitWriteLock()
         {
-            itemsLock.ExitWriteLock();
+            ItemsLock.ExitWriteLock();
         }
 
         public override void Update()
@@ -81,7 +81,7 @@ namespace MagicStorage.Components
             if (updateTimer >= 60)
             {
                 updateTimer = 0;
-                if (Main.netMode != 2 || itemsLock.TryEnterWriteLock(2))
+                if (Main.netMode != 2 || ItemsLock.TryEnterWriteLock(2))
                 {
                     try
                     {
@@ -91,7 +91,7 @@ namespace MagicStorage.Components
                     {
                         if (Main.netMode == 2)
                         {
-                            itemsLock.ExitWriteLock();
+                            ItemsLock.ExitWriteLock();
                         }
                     }
                 }
@@ -232,11 +232,11 @@ namespace MagicStorage.Components
                     NetHelper.StartUpdateQueue();
                     while (!unitWithSpace.IsFull && !storageUnit.IsEmpty)
                     {
-                        Item item = storageUnit.WithdrawStack();
-                        unitWithSpace.DepositItem(item, true);
-                        if (!item.IsAir)
+                        Item Item = storageUnit.WithdrawStack();
+                        unitWithSpace.DepositItem(Item, true);
+                        if (!Item.IsAir)
                         {
-                            storageUnit.DepositItem(item, true);
+                            storageUnit.DepositItem(Item, true);
                         }
                     }
                     NetHelper.ProcessUpdateQueue();
@@ -376,9 +376,9 @@ namespace MagicStorage.Components
             }
         }
 
-        public override void NetSend(BinaryWriter writer, bool lightSend)
+        public override void NetSend(BinaryWriter writer)
         {
-            base.NetSend(writer, lightSend);
+            base.NetSend(writer);
             writer.Write((short)remoteAccesses.Count);
             foreach (Point16 remoteAccess in remoteAccesses)
             {
@@ -387,9 +387,9 @@ namespace MagicStorage.Components
             }
         }
 
-        public override void NetReceive(BinaryReader reader, bool lightReceive)
+        public override void NetReceive(BinaryReader reader)
         {
-            base.NetReceive(reader, lightReceive);
+            base.NetReceive(reader);
             int count = reader.ReadInt16();
             for (int k = 0; k < count; k++)
             {

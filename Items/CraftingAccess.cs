@@ -11,45 +11,41 @@ namespace MagicStorage.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Storage Crafting Interface");
-            DisplayName.AddTranslation(GameCulture.Russian, "Модуль Создания Предметов");
-            DisplayName.AddTranslation(GameCulture.Polish, "Interfejs Rzemieślniczy Magazynu");
-            DisplayName.AddTranslation(GameCulture.French, "Interface de Stockage Artisanat");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Interfaz de Elaboración de almacenamiento");
-            DisplayName.AddTranslation(GameCulture.Chinese, "制作存储单元");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Russian, "Модуль Создания Предметов");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Polish, "Interfejs Rzemieślniczy Magazynu");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.French, "Interface de Stockage Artisanat");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Spanish, "Interfaz de Elaboración de almacenamiento");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Chinese, "制作存储单元");
         }
 
         public override void SetDefaults()
         {
-            item.width = 26;
-            item.height = 26;
-            item.maxStack = 99;
-            item.useTurn = true;
-            item.autoReuse = true;
-            item.useAnimation = 15;
-            item.useTime = 10;
-            item.useStyle = 1;
-            item.consumable = true;
-            item.rare = 1;
-            item.value = Item.sellPrice(0, 1, 16, 25);
-            item.createTile = mod.TileType("CraftingAccess");
+            Item.width = 26;
+            Item.height = 26;
+            Item.maxStack = 99;
+            Item.useTurn = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.useStyle = 1;
+            Item.consumable = true;
+            Item.rare = 1;
+            Item.value = Item.sellPrice(0, 1, 16, 25);
+            Item.createTile = ModContent.TileType<Components.CraftingAccess>();
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(null, "StorageComponent");
-            recipe.AddRecipeGroup("MagicStorage:AnyDiamond", 3);
-            if (MagicStorage.legendMod == null)
-            {
-                recipe.AddIngredient(ItemID.Sapphire, 7);
-            }
-            else
-            {
-                recipe.AddRecipeGroup("MagicStorage:AnySapphire", 7);
-            }
-            recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe()
+            .AddIngredient(ModContent.ItemType<StorageComponent>())
+            .AddRecipeGroup("MagicStorage:AnyDiamond", 3)
+            .AddIngredient(ItemID.Sapphire, 7)
+            //if (MagicStorage.legendMod == null)
+            //    .AddIngredient(ItemID.Sapphire, 7);
+            //else
+            //    .AddRecipeGroup("MagicStorage:AnySapphire", 7)
+            .AddTile(TileID.WorkBenches)
+            .Register();
         }
     }
 }

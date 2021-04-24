@@ -9,6 +9,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
+using Terraria.GameContent;
 using MagicStorage.Components;
 using MagicStorage.Sorting;
 
@@ -57,7 +58,7 @@ namespace MagicStorage
         private static float scrollBarViewSize = 1f;
         private static float scrollBarMaxViewSize = 2f;
 
-        private static List<Item> items = new List<Item>();
+        private static List<Item> Items = new List<Item>();
         private static List<bool> didMatCheck = new List<bool>();
         private static int numRows;
         private static int displayRows;
@@ -68,14 +69,14 @@ namespace MagicStorage
         public static void Initialize()
         {
             InitLangStuff();
-            float itemSlotWidth = Main.inventoryBackTexture.Width * inventoryScale;
-            float itemSlotHeight = Main.inventoryBackTexture.Height * inventoryScale;
+            float ItemSlotWidth = TextureAssets.InventoryBack.Width() * inventoryScale;
+            float ItemSlotHeight = TextureAssets.InventoryBack.Height() * inventoryScale;
 
             panelTop = Main.instance.invBottom + 60;
             panelLeft = 20f;
             basePanel = new UIPanel();
             float innerPanelLeft = panelLeft + basePanel.PaddingLeft;
-            float innerPanelWidth = numColumns * (itemSlotWidth + padding) + 20f + padding;
+            float innerPanelWidth = numColumns * (ItemSlotWidth + padding) + 20f + padding;
             panelWidth = basePanel.PaddingLeft + innerPanelWidth + basePanel.PaddingRight;
             panelHeight = Main.screenHeight - panelTop - 40f;
             basePanel.Left.Set(panelLeft, 0f);
@@ -123,8 +124,8 @@ namespace MagicStorage
             slotZone.Height.Set(-116f, 1f);
             basePanel.Append(slotZone);
 
-            numRows = (items.Count + numColumns - 1) / numColumns;
-            displayRows = (int)slotZone.GetDimensions().Height / ((int)itemSlotHeight + padding);
+            numRows = (Items.Count + numColumns - 1) / numColumns;
+            displayRows = (int)slotZone.GetDimensions().Height / ((int)ItemSlotHeight + padding);
             slotZone.SetDimensions(numColumns, displayRows);
             int noDisplayRows = numRows - displayRows;
             if (noDisplayRows < 0)
@@ -132,7 +133,7 @@ namespace MagicStorage
                 noDisplayRows = 0;
             }
             scrollBarMaxViewSize = 1 + noDisplayRows;
-            scrollBar.Height.Set(displayRows * (itemSlotHeight + padding), 0f);
+            scrollBar.Height.Set(displayRows * (ItemSlotHeight + padding), 0f);
             scrollBar.Left.Set(-20f, 1f);
             scrollBar.SetView(scrollBarViewSize, scrollBarMaxViewSize);
             slotZone.Append(scrollBar);
@@ -195,10 +196,10 @@ namespace MagicStorage
             {
                 sortButtons = new UIButtonChoice(new Texture2D[]
                 {
-                    Main.inventorySortTexture[0],
-                    MagicStorage.Instance.GetTexture("SortID"),
-                    MagicStorage.Instance.GetTexture("SortName"),
-                    MagicStorage.Instance.GetTexture("SortNumber")
+                    TextureAssets.InventorySort[0].Value,
+                    ModContent.GetTexture("MagicStorage/SortID").Value,
+                    ModContent.GetTexture("MagicStorage/SortName").Value,
+                    ModContent.GetTexture("MagicStorage/SortNumber").Value
                 },
                 new LocalizedText[]
                 {
@@ -216,13 +217,13 @@ namespace MagicStorage
             {
                 filterButtons = new UIButtonChoice(new Texture2D[]
                 {
-                    MagicStorage.Instance.GetTexture("FilterAll"),
-                    MagicStorage.Instance.GetTexture("FilterMelee"),
-                    MagicStorage.Instance.GetTexture("FilterPickaxe"),
-                    MagicStorage.Instance.GetTexture("FilterArmor"),
-                    MagicStorage.Instance.GetTexture("FilterPotion"),
-                    MagicStorage.Instance.GetTexture("FilterTile"),
-                    MagicStorage.Instance.GetTexture("FilterMisc"),
+                    ModContent.GetTexture("MagicStorage/FilterAll").Value,
+                    ModContent.GetTexture("MagicStorage/FilterMelee").Value,
+                    ModContent.GetTexture("MagicStorage/FilterPickaxe").Value,
+                    ModContent.GetTexture("MagicStorage/FilterArmor").Value,
+                    ModContent.GetTexture("MagicStorage/FilterPotion").Value,
+                    ModContent.GetTexture("MagicStorage/FilterTile").Value,
+                    ModContent.GetTexture("MagicStorage/FilterMisc").Value,
                 },
                 new LocalizedText[]
                 {
@@ -263,13 +264,13 @@ namespace MagicStorage
         public static void Draw(TEStorageHeart heart)
         {
             Player player = Main.player[Main.myPlayer];
-            StoragePlayer modPlayer = player.GetModPlayer<StoragePlayer>();
+            StoragePlayer ModPlayer = player.GetModPlayer<StoragePlayer>();
             Initialize();
             if (Main.mouseX > panelLeft && Main.mouseX < panelLeft + panelWidth && Main.mouseY > panelTop && Main.mouseY < panelTop + panelHeight)
             {
                 player.mouseInterface = true;
-                player.showItemIcon = false;
-                InterfaceHelper.HideItemIconCache();
+                player.cursorItemIconEnabled = false;
+                Main.ItemIconCacheVerification();
             }
             basePanel.Draw(Main.spriteBatch);
             slotZone.DrawText();
@@ -280,13 +281,13 @@ namespace MagicStorage
         private static Item GetItem(int slot, ref int context)
         {
             int index = slot + numColumns * (int)Math.Round(scrollBar.ViewPosition);
-            Item item = index < items.Count ? items[index] : new Item();
-            if (!item.IsAir && !didMatCheck[index])
+            Item Item = index < Items.Count ? Items[index] : new Item();
+            if (!Item.IsAir && !didMatCheck[index])
             {
-                item.checkMat();
+                Item.checkMat();
                 didMatCheck[index] = true;
             }
-            return item;
+            return Item;
         }
 
         private static void UpdateScrollBar()
@@ -331,8 +332,8 @@ namespace MagicStorage
         private static TEStorageHeart GetHeart()
         {
             Player player = Main.player[Main.myPlayer];
-            StoragePlayer modPlayer = player.GetModPlayer<StoragePlayer>();
-            return modPlayer.GetStorageHeart();
+            StoragePlayer ModPlayer = player.GetModPlayer<StoragePlayer>();
+            return ModPlayer.GetStorageHeart();
         }
 
         public static void RefreshItems()
@@ -342,7 +343,7 @@ namespace MagicStorage
                 CraftingGUI.RefreshItems();
                 return;
             }
-            items.Clear();
+            Items.Clear();
             didMatCheck.Clear();
             TEStorageHeart heart = GetHeart();
             if (heart == null)
@@ -355,8 +356,8 @@ namespace MagicStorage
             SortMode sortMode = (SortMode)sortButtons.Choice;
             FilterMode filterMode = (FilterMode)filterButtons.Choice;
 
-            items.AddRange(ItemSorter.SortAndFilter(heart.GetStoredItems(), sortMode, filterMode, searchBar2.Text, searchBar.Text));
-            for (int k = 0; k < items.Count; k++)
+            Items.AddRange(ItemSorter.SortAndFilter(heart.GetStoredItems(), sortMode, filterMode, searchBar2.Text, searchBar.Text));
+            for (int k = 0; k < Items.Count; k++)
             {
                 didMatCheck.Add(false);
             }
@@ -373,7 +374,7 @@ namespace MagicStorage
                     if (TryDepositAll())
                     {
                         RefreshItems();
-                        Main.PlaySound(7, -1, -1, 1);
+                        Terraria.Audio.SoundEngine.PlaySound(7, -1, -1, 1);
                     }
                 }
             }
@@ -405,9 +406,9 @@ namespace MagicStorage
                         changed = true;
                     }
                 }
-                else if (Main.mouseItem.IsAir && slot < items.Count && !items[slot].IsAir)
+                else if (Main.mouseItem.IsAir && slot < Items.Count && !Items[slot].IsAir)
                 {
-                    Item toWithdraw = items[slot].Clone();
+                    Item toWithdraw = Items[slot].Clone();
                     if (toWithdraw.stack > toWithdraw.maxStack)
                     {
                         toWithdraw.stack = toWithdraw.maxStack;
@@ -415,23 +416,23 @@ namespace MagicStorage
                     Main.mouseItem = DoWithdraw(toWithdraw, ItemSlot.ShiftInUse);
                     if (ItemSlot.ShiftInUse)
                     {
-                        Main.mouseItem = player.GetItem(Main.myPlayer, Main.mouseItem, false, true);
+                        Main.mouseItem = player.GetItem(Main.myPlayer, Main.mouseItem, GetItemSettings.InventoryEntityToPlayerInventorySettings);
                     }
                     changed = true;
                 }
                 if (changed)
                 {
                     RefreshItems();
-                    Main.PlaySound(7, -1, -1, 1);
+                    Terraria.Audio.SoundEngine.PlaySound(7, -1, -1, 1);
                 }
             }
 
-            if (curMouse.RightButton == ButtonState.Pressed && oldMouse.RightButton == ButtonState.Released && slot < items.Count && (Main.mouseItem.IsAir || ItemData.Matches(Main.mouseItem, items[slot]) && Main.mouseItem.stack < Main.mouseItem.maxStack))
+            if (curMouse.RightButton == ButtonState.Pressed && oldMouse.RightButton == ButtonState.Released && slot < Items.Count && (Main.mouseItem.IsAir || ItemData.Matches(Main.mouseItem, Items[slot]) && Main.mouseItem.stack < Main.mouseItem.maxStack))
             {
                 slotFocus = slot;
             }
             
-            if (slot < items.Count && !items[slot].IsAir)
+            if (slot < Items.Count && !Items[slot].IsAir)
             {
                 hoverSlot = visualSlot;
             }
@@ -444,7 +445,7 @@ namespace MagicStorage
 
         private static void SlotFocusLogic()
         {
-            if (slotFocus >= items.Count || (!Main.mouseItem.IsAir && (!ItemData.Matches(Main.mouseItem, items[slotFocus]) || Main.mouseItem.stack >= Main.mouseItem.maxStack)))
+            if (slotFocus >= Items.Count || (!Main.mouseItem.IsAir && (!ItemData.Matches(Main.mouseItem, Items[slotFocus]) || Main.mouseItem.stack >= Main.mouseItem.maxStack)))
             {
                 ResetSlotFocus();
             }
@@ -458,7 +459,7 @@ namespace MagicStorage
                     {
                         maxRightClickTimer = 1;
                     }
-                    Item toWithdraw = items[slotFocus].Clone();
+                    Item toWithdraw = Items[slotFocus].Clone();
                     toWithdraw.stack = 1;
                     Item result = DoWithdraw(toWithdraw);
                     if (Main.mouseItem.IsAir)
@@ -469,33 +470,33 @@ namespace MagicStorage
                     {
                         Main.mouseItem.stack += result.stack;
                     }
-                    Main.soundInstanceMenuTick.Stop();
-                    Main.soundInstanceMenuTick = Main.soundMenuTick.CreateInstance();
-                    Main.PlaySound(12, -1, -1, 1);
+                    //Main.soundInstanceMenuTick.Stop();
+                    //Main.soundInstanceMenuTick = Main.soundMenuTick.CreateInstance();
+                    Terraria.Audio.SoundEngine.PlaySound(12, -1, -1, 1);
                     RefreshItems();
                 }
                 rightClickTimer--;
             }
         }
 
-        private static bool TryDeposit(Item item)
+        private static bool TryDeposit(Item Item)
         {
-            int oldStack = item.stack;
-            DoDeposit(item);
-            return oldStack != item.stack;
+            int oldStack = Item.stack;
+            DoDeposit(Item);
+            return oldStack != Item.stack;
         }
 
-        private static void DoDeposit(Item item)
+        private static void DoDeposit(Item Item)
         {
             TEStorageHeart heart = GetHeart();
             if (Main.netMode == 0)
             {
-                heart.DepositItem(item);
+                heart.DepositItem(Item);
             }
             else
             {
-                NetHelper.SendDeposit(heart.ID, item);
-                item.SetDefaults(0, true);
+                NetHelper.SendDeposit(heart.ID, Item);
+                Item.SetDefaults(0, true);
             }
         }
 
@@ -521,34 +522,34 @@ namespace MagicStorage
             }
             else
             {
-                List<Item> items = new List<Item>();
+                List<Item> Items = new List<Item>();
                 for (int k = 10; k < 50; k++)
                 {
                     if (!player.inventory[k].IsAir && !player.inventory[k].favorited)
                     {
-                        items.Add(player.inventory[k]);
+                        Items.Add(player.inventory[k]);
                     }
                 }
-                NetHelper.SendDepositAll(heart.ID, items);
-                foreach (Item item in items)
+                NetHelper.SendDepositAll(heart.ID, Items);
+                foreach (Item Item in Items)
                 {
-                    item.SetDefaults(0, true);
+                    Item.SetDefaults(0, true);
                 }
                 changed = true;
             }
             return changed;
         }
 
-        private static Item DoWithdraw(Item item, bool toInventory = false)
+        private static Item DoWithdraw(Item Item, bool toInventory = false)
         {
             TEStorageHeart heart = GetHeart();
             if (Main.netMode == 0)
             {
-                return heart.TryWithdraw(item);
+                return heart.TryWithdraw(Item);
             }
             else
             {
-                NetHelper.SendWithdraw(heart.ID, item, toInventory);
+                NetHelper.SendWithdraw(heart.ID, Item, toInventory);
                 return new Item();
             }
         }

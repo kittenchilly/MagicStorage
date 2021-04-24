@@ -11,37 +11,36 @@ namespace MagicStorage.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Blue Chlorophyte Storage Unit");
-            DisplayName.AddTranslation(GameCulture.Russian, "Синяя Хлорофитовая Ячейка Хранилища");
-            DisplayName.AddTranslation(GameCulture.Polish, "Jednostka magazynująca (Niebieski Chlorofit)");
-            DisplayName.AddTranslation(GameCulture.French, "Unité de stockage (Chlorophylle Bleu)");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Unidad de Almacenamiento (Clorofita Azul)");
-            DisplayName.AddTranslation(GameCulture.Chinese, "存储单元(蓝色叶绿)");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Russian, "Синяя Хлорофитовая Ячейка Хранилища");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Polish, "Jednostka magazynująca (Niebieski Chlorofit)");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.French, "Unité de stockage (Chlorophylle Bleu)");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Spanish, "Unidad de Almacenamiento (Clorofita Azul)");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Chinese, "存储单元(蓝色叶绿)");
         }
 
         public override void SetDefaults()
         {
-            item.width = 26;
-            item.height = 26;
-            item.maxStack = 99;
-            item.useTurn = true;
-            item.autoReuse = true;
-            item.useAnimation = 15;
-            item.useTime = 10;
-            item.useStyle = 1;
-            item.consumable = true;
-            item.rare = 7;
-            item.value = Item.sellPrice(0, 1, 60, 0);
-            item.createTile = mod.TileType("StorageUnit");
-            item.placeStyle = 5;
+            Item.width = 26;
+            Item.height = 26;
+            Item.maxStack = 99;
+            Item.useTurn = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.useStyle = 1;
+            Item.consumable = true;
+            Item.rare = 7;
+            Item.value = Item.sellPrice(0, 1, 60, 0);
+            Item.createTile = ModContent.TileType<Components.StorageUnit>();
+            Item.placeStyle = 5;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.ItemType("StorageUnitHallowed"));
-            recipe.AddIngredient(mod.ItemType("UpgradeBlueChlorophyte"));
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe()
+            .AddIngredient(ModContent.ItemType<Items.StorageUnitHallowed>())
+            .AddIngredient(ModContent.ItemType<Items.UpgradeBlueChlorophyte>())
+            .Register();
         }
     }
 }

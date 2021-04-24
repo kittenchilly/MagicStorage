@@ -25,10 +25,10 @@ namespace MagicStorage.Components
 
         public override bool ValidTile(Tile tile)
         {
-            return tile.type == mod.TileType("CraftingAccess") && tile.frameX == 0 && tile.frameY == 0;
+            return tile.type == ModContent.TileType<CraftingAccess>() && tile.frameX == 0 && tile.frameY == 0;
         }
 
-        public void TryDepositStation(Item item)
+        public void TryDepositStation(Item Item)
         {
             if (Main.netMode == 1)
             {
@@ -36,7 +36,7 @@ namespace MagicStorage.Components
             }
             foreach (Item station in stations)
             {
-                if (station.type == item.type)
+                if (station.type == Item.type)
                 {
                     return;
                 }
@@ -45,12 +45,12 @@ namespace MagicStorage.Components
             {
                 if (stations[k].IsAir)
                 {
-                    stations[k] = item.Clone();
+                    stations[k] = Item.Clone();
                     stations[k].stack = 1;
-                    item.stack--;
-                    if (item.stack <= 0)
+                    Item.stack--;
+                    if (Item.stack <= 0)
                     {
-                        item.SetDefaults(0);
+                        Item.SetDefaults(0);
                     }
                     NetHelper.SendTEUpdate(ID, Position);
                     return;
@@ -66,60 +66,60 @@ namespace MagicStorage.Components
             }
             if (!stations[slot].IsAir)
             {
-                Item item = stations[slot];
+                Item Item = stations[slot];
                 stations[slot] = new Item();
                 NetHelper.SendTEUpdate(ID, Position);
-                return item;
+                return Item;
             }
             return new Item();
         }
 
-        public Item DoStationSwap(Item item, int slot)
+        public Item DoStationSwap(Item Item, int slot)
         {
             if (Main.netMode == 1)
             {
                 return new Item();
             }
-            if (!item.IsAir)
+            if (!Item.IsAir)
             {
                 for (int k = 0; k < stations.Length; k++)
                 {
-                    if (k != slot && stations[k].type == item.type)
+                    if (k != slot && stations[k].type == Item.type)
                     {
-                        return item;
+                        return Item;
                     }
                 }
             }
-            if ((item.IsAir || item.stack == 1) && !stations[slot].IsAir)
+            if ((Item.IsAir || Item.stack == 1) && !stations[slot].IsAir)
             {
-                Item temp = item;
-                item = stations[slot];
+                Item temp = Item;
+                Item = stations[slot];
                 stations[slot] = temp;
                 NetHelper.SendTEUpdate(ID, Position);
-                return item;
+                return Item;
             }
-            else if (!item.IsAir && stations[slot].IsAir)
+            else if (!Item.IsAir && stations[slot].IsAir)
             {
-                stations[slot] = item.Clone();
+                stations[slot] = Item.Clone();
                 stations[slot].stack = 1;
-                item.stack--;
-                if (item.stack <= 0)
+                Item.stack--;
+                if (Item.stack <= 0)
                 {
-                    item.SetDefaults(0);
+                    Item.SetDefaults(0);
                 }
                 NetHelper.SendTEUpdate(ID, Position);
-                return item;
+                return Item;
             }
-            return item;
+            return Item;
         }
 
         public override TagCompound Save()
         {
             TagCompound tag = new TagCompound();
             IList<TagCompound> listStations = new List<TagCompound>();
-            foreach (Item item in stations)
+            foreach (Item Item in stations)
             {
-                listStations.Add(ItemIO.Save(item));
+                listStations.Add(ItemIO.Save(Item));
             }
             tag["Stations"] = listStations;
             return tag;
@@ -137,15 +137,15 @@ namespace MagicStorage.Components
             }
         }
 
-        public override void NetSend(BinaryWriter writer, bool lightSend)
+        public override void NetSend(BinaryWriter writer)
         {
-            foreach (Item item in stations)
+            foreach (Item Item in stations)
             {
-                ItemIO.Send(item, writer, true, false);
+                ItemIO.Send(Item, writer, true, false);
             }
         }
 
-        public override void NetReceive(BinaryReader reader, bool lightReceive)
+        public override void NetReceive(BinaryReader reader)
         {
             for (int k = 0; k < stations.Length; k++)
             {

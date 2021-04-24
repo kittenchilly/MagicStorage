@@ -14,7 +14,7 @@ namespace MagicStorage.Components
 {
     public class TEStorageUnit : TEAbstractStorageUnit
     {
-        private IList<Item> items = new List<Item>();
+        private IList<Item> Items = new List<Item>();
         private Queue<UnitOperation> netQueue = new Queue<UnitOperation>();
         private bool receiving = false;
 
@@ -56,7 +56,7 @@ namespace MagicStorage.Components
         {
             get
             {
-                return items.Count >= Capacity;
+                return Items.Count >= Capacity;
             }
         }
 
@@ -64,7 +64,7 @@ namespace MagicStorage.Components
         {
             get
             {
-                return items.Count == 0;
+                return Items.Count == 0;
             }
         }
 
@@ -72,13 +72,13 @@ namespace MagicStorage.Components
         {
             get
             {
-                return items.Count;
+                return Items.Count;
             }
         }
 
         public override bool ValidTile(Tile tile)
         {
-            return tile.type == mod.TileType("StorageUnit") && tile.frameX % 36 == 0 && tile.frameY % 36 == 0;
+            return tile.type == ModContent.TileType<StorageUnit>() && tile.frameX % 36 == 0 && tile.frameY % 36 == 0;
         }
 
         public override bool HasSpaceInStackFor(Item check, bool locked = false)
@@ -128,7 +128,7 @@ namespace MagicStorage.Components
 
         public override IEnumerable<Item> GetItems()
         {
-            return items;
+            return Items;
         }
 
         public override void DepositItem(Item toDeposit, bool locked = false)
@@ -146,17 +146,17 @@ namespace MagicStorage.Components
                 Item original = toDeposit.Clone();
                 bool finished = false;
                 bool hasChange = false;
-                foreach (Item item in items)
+                foreach (Item Item in Items)
                 {
-                    if (ItemData.Matches(toDeposit, item) && item.stack < item.maxStack)
+                    if (ItemData.Matches(toDeposit, Item) && Item.stack < Item.maxStack)
                     {
-                        int total = item.stack + toDeposit.stack;
+                        int total = Item.stack + toDeposit.stack;
                         int newStack = total;
-                        if (newStack > item.maxStack)
+                        if (newStack > Item.maxStack)
                         {
-                            newStack = item.maxStack;
+                            newStack = Item.maxStack;
                         }
-                        item.stack = newStack;
+                        Item.stack = newStack;
                         hasChange = true;
                         toDeposit.stack = total - newStack;
                         if (toDeposit.stack <= 0)
@@ -169,10 +169,10 @@ namespace MagicStorage.Components
                 }
                 if (!finished && !IsFull)
                 {
-                    Item item = toDeposit.Clone();
-                    item.newAndShiny = false;
-                    item.favorited = false;
-                    items.Add(item);
+                    Item Item = toDeposit.Clone();
+                    Item.newAndShiny = false;
+                    Item.favorited = false;
+                    Items.Add(Item);
                     toDeposit.SetDefaults(0, true);
                     hasChange = true;
                     finished = true;
@@ -210,16 +210,16 @@ namespace MagicStorage.Components
                 Item original = lookFor.Clone();
                 Item result = lookFor.Clone();
                 result.stack = 0;
-                for (int k = 0; k < items.Count; k++)
+                for (int k = 0; k < Items.Count; k++)
                 {
-                    Item item = items[k];
-                    if (ItemData.Matches(lookFor, item))
+                    Item Item = Items[k];
+                    if (ItemData.Matches(lookFor, Item))
                     {
-                        int withdraw = Math.Min(lookFor.stack, item.stack);
-                        item.stack -= withdraw;
-                        if (item.stack <= 0)
+                        int withdraw = Math.Min(lookFor.stack, Item.stack);
+                        Item.stack -= withdraw;
+                        if (Item.stack <= 0)
                         {
-                            items.RemoveAt(k);
+                            Items.RemoveAt(k);
                             k--;
                         }
                         result.stack += withdraw;
@@ -302,16 +302,16 @@ namespace MagicStorage.Components
         {
             if (UpdateTileFrame(locked))
             {
-                NetMessage.SendTileRange(-1, Position.X, Position.Y, 2, 2);
+                NetMessage.SendTileSquare(-1, Position.X, Position.Y, 2, 2);
             }
         }
 
         //precondition: lock is already taken
         internal static void SwapItems(TEStorageUnit unit1, TEStorageUnit unit2)
         {
-            IList<Item> items = unit1.items;
-            unit1.items = unit2.items;
-            unit2.items = items;
+            IList<Item> Items = unit1.Items;
+            unit1.Items = unit2.Items;
+            unit2.Items = Items;
             HashSet<ItemData> dict = unit1.hasSpaceInStack;
             unit1.hasSpaceInStack = unit2.hasSpaceInStack;
             unit2.hasSpaceInStack = dict;
@@ -336,8 +336,8 @@ namespace MagicStorage.Components
             {
                 return new Item();
             }
-            Item item = items[items.Count - 1];
-            items.RemoveAt(items.Count - 1);
+            Item Item = Items[Items.Count - 1];
+            Items.RemoveAt(Items.Count - 1);
             if (Main.netMode != 1)
             {
                 if (Main.netMode == 2)
@@ -346,16 +346,16 @@ namespace MagicStorage.Components
                 }
                 PostChangeContents();
             }
-            return item;
+            return Item;
         }
 
         public override TagCompound Save()
         {
             TagCompound tag = base.Save();
             List<TagCompound> tagItems = new List<TagCompound>();
-            foreach (Item item in items)
+            foreach (Item Item in Items)
             {
-                tagItems.Add(ItemIO.Save(item));
+                tagItems.Add(ItemIO.Save(Item));
             }
             tag.Set("Items", tagItems);
             return tag;
@@ -367,10 +367,10 @@ namespace MagicStorage.Components
             ClearItemsData();
             foreach (TagCompound tagItem in tag.GetList<TagCompound>("Items"))
             {
-                Item item = ItemIO.Load(tagItem);
-                items.Add(item);
-                ItemData data = new ItemData(item);
-                if (item.stack < item.maxStack)
+                Item Item = ItemIO.Load(tagItem);
+                Items.Add(Item);
+                ItemData data = new ItemData(Item);
+                if (Item.stack < Item.maxStack)
                 {
                     hasSpaceInStack.Add(data);
                 }
@@ -382,7 +382,7 @@ namespace MagicStorage.Components
             }
         }
 
-        public override void NetSend(BinaryWriter trueWriter, bool lightSend)
+        public override void NetSend(BinaryWriter trueWriter)
         {
             /* Recreate a BinaryWriter writer */
             MemoryStream buffer = new MemoryStream(65536);
@@ -391,8 +391,8 @@ namespace MagicStorage.Components
             BinaryWriter writer = new BinaryWriter(writerBuffer);
 
             /* Original code */
-            base.NetSend(writer, lightSend);
-            if (netQueue.Count > Capacity / 2 || !lightSend)
+            base.NetSend(writer);
+            if (netQueue.Count > Capacity / 2)
             {
                 netQueue.Clear();
                 netQueue.Enqueue(UnitOperation.FullSync.Create());
@@ -426,7 +426,7 @@ namespace MagicStorage.Components
             writer.Dispose(); writerBuffer.Dispose(); compressor.Dispose(); buffer.Dispose();
         }
 
-        public override void NetReceive(BinaryReader trueReader, bool lightReceive)
+        public override void NetReceive(BinaryReader trueReader)
         {
             /* Reads the buffer off the network */
             MemoryStream buffer = new MemoryStream(65536);
@@ -440,11 +440,11 @@ namespace MagicStorage.Components
             BinaryReader reader = new BinaryReader(decompressor);
 
             /* Original code */
-            base.NetReceive(reader, lightReceive);
+            base.NetReceive(reader);
             if (TileEntity.ByPosition.ContainsKey(Position) && TileEntity.ByPosition[Position] is TEStorageUnit)
             {
                 TEStorageUnit other = (TEStorageUnit)TileEntity.ByPosition[Position];
-                items = other.items;
+                Items = other.Items;
                 hasSpaceInStack = other.hasSpaceInStack;
                 hasItem = other.hasItem;
             }
@@ -470,7 +470,7 @@ namespace MagicStorage.Components
 
         private void ClearItemsData()
         {
-            items.Clear();
+            Items.Clear();
             hasSpaceInStack.Clear();
             hasItem.Clear();
         }
@@ -479,10 +479,10 @@ namespace MagicStorage.Components
         {
             hasSpaceInStack.Clear();
             hasItem.Clear();
-            foreach (Item item in items)
+            foreach (Item Item in Items)
             {
-                ItemData data = new ItemData(item);
-                if (item.stack < item.maxStack)
+                ItemData data = new ItemData(Item);
+                if (Item.stack < Item.maxStack)
                 {
                     hasSpaceInStack.Add(data);
                 }
@@ -525,10 +525,10 @@ namespace MagicStorage.Components
                 return (UnitOperation)MemberwiseClone();
             }
 
-            public UnitOperation Create(Item item)
+            public UnitOperation Create(Item Item)
             {
                 UnitOperation clone = Create();
-                clone.data = item;
+                clone.data = Item;
                 return clone;
             }
 
@@ -557,10 +557,10 @@ namespace MagicStorage.Components
         {
             protected override void SendData(BinaryWriter writer, TEStorageUnit unit)
             {
-                writer.Write(unit.items.Count);
-                foreach (Item item in unit.items)
+                writer.Write(unit.Items.Count);
+                foreach (Item Item in unit.Items)
                 {
-                    ItemIO.Send(item, writer, true, false);
+                    ItemIO.Send(Item, writer, true, false);
                 }
             }
 
@@ -570,10 +570,10 @@ namespace MagicStorage.Components
                 int count = reader.ReadInt32();
                 for (int k = 0; k < count; k++)
                 {
-                    Item item = ItemIO.Receive(reader, true, false);
-                    unit.items.Add(item);
-                    ItemData data = new ItemData(item);
-                    if (item.stack < item.maxStack)
+                    Item Item = ItemIO.Receive(reader, true, false);
+                    unit.Items.Add(Item);
+                    ItemData data = new ItemData(Item);
+                    if (Item.stack < Item.maxStack)
                     {
                         unit.hasSpaceInStack.Add(data);
                     }

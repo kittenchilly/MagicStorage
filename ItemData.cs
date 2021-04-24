@@ -16,10 +16,10 @@ namespace MagicStorage
             this.Prefix = prefix;
         }
 
-        public ItemData(Item item)
+        public ItemData(Item Item)
         {
-            this.Type = item.netID;
-            this.Prefix = item.prefix;
+            this.Type = Item.netID;
+            this.Prefix = Item.prefix;
         }
 
         public override bool Equals(Object other)
@@ -36,9 +36,9 @@ namespace MagicStorage
             return 100 * Type + Prefix;
         }
 
-        public static bool Matches(Item item1, Item item2)
+        public static bool Matches(Item Item1, Item Item2)
         {
-            return Matches(new ItemData(item1), new ItemData(item2));
+            return Matches(new ItemData(Item1), new ItemData(Item2));
         }
 
         public static bool Matches(ItemData data1, ItemData data2)
@@ -46,10 +46,10 @@ namespace MagicStorage
             return data1.Type == data2.Type && data1.Prefix == data2.Prefix;
         }
 
-        public static int Compare(Item item1, Item item2)
+        public static int Compare(Item Item1, Item Item2)
         {
-            ItemData data1 = new ItemData(item1);
-            ItemData data2 = new ItemData(item2);
+            ItemData data1 = new ItemData(Item1);
+            ItemData data2 = new ItemData(Item2);
             if (data1.Type != data2.Type)
             {
                 return data1.Type - data2.Type;

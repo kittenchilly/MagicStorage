@@ -10,45 +10,45 @@ namespace MagicStorage.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.AddTranslation(GameCulture.Russian, "Модуль Доступа к Хранилищу");
-            DisplayName.AddTranslation(GameCulture.Polish, "Okno dostępu do magazynu");
-            DisplayName.AddTranslation(GameCulture.French, "Access de Stockage");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Acceso de Almacenamiento");
-            DisplayName.AddTranslation(GameCulture.Chinese, "存储装置");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Russian, "Модуль Доступа к Хранилищу");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Polish, "Okno dostępu do magazynu");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.French, "Access de Stockage");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Spanish, "Acceso de Almacenamiento");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Chinese, "存储装置");
         }
         
         public override void SetDefaults()
         {
-            item.width = 26;
-            item.height = 26;
-            item.maxStack = 99;
-            item.useTurn = true;
-            item.autoReuse = true;
-            item.useAnimation = 15;
-            item.useTime = 10;
-            item.useStyle = 1;
-            item.consumable = true;
-            item.rare = 1;
-            item.value = Item.sellPrice(0, 0, 67, 50);
-            item.createTile = mod.TileType("StorageAccess");
+            Item.width = 26;
+            Item.height = 26;
+            Item.maxStack = 99;
+            Item.useTurn = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.useStyle = 1;
+            Item.consumable = true;
+            Item.rare = 1;
+            Item.value = Item.sellPrice(0, 0, 67, 50);
+            Item.createTile = ModContent.TileType<Components.StorageAccess>();
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(null, "StorageComponent");
-            recipe.AddRecipeGroup("MagicStorage:AnyDiamond", 1);
-            if (MagicStorage.legendMod == null)
-            {
-                recipe.AddIngredient(ItemID.Topaz, 7);
-            }
-            else
-            {
-                recipe.AddRecipeGroup("MagicStorage:AnyTopaz", 7);
-            }
-            recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe()
+            .AddIngredient(ModContent.ItemType<StorageComponent>())
+            .AddRecipeGroup("MagicStorage:AnyDiamond", 1)
+            .AddIngredient(ItemID.Topaz, 7)
+            //if (MagicStorage.legendMod == null)
+            //{
+            //    recipe.AddIngredient(ItemID.Topaz, 7);
+            //}
+            //else
+            //{
+            //    recipe.AddRecipeGroup("MagicStorage:AnyTopaz", 7);
+            //}
+            .AddTile(TileID.WorkBenches)
+            .Register();
         }
     }
 }

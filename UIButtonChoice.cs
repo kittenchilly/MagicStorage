@@ -74,8 +74,8 @@ namespace MagicStorage
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
-            Texture2D backTexture = MagicStorage.Instance.GetTexture("SortButtonBackground");
-            Texture2D backTextureActive = MagicStorage.Instance.GetTexture("SortButtonBackgroundActive");
+            Texture2D backTexture = ModContent.GetTexture("MagicStorage/SortButtonBackground").Value;
+            Texture2D backTextureActive = ModContent.GetTexture("MagicStorage/SortButtonBackgroundActive").Value;
             CalculatedStyle dim = GetDimensions();
             for (int k = 0; k < buttons.Length; k++)
             {

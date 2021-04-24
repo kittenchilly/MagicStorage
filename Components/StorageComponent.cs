@@ -26,7 +26,7 @@ namespace MagicStorage.Components
             TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
             TileObjectData.newTile.CoordinateWidth = 16;
             TileObjectData.newTile.CoordinatePadding = 2;
-            TileObjectData.newTile.HookCheck = new PlacementHook(CanPlace, -1, 0, true);
+            TileObjectData.newTile.HookCheckIfCanPlace = new PlacementHook(CanPlace, -1, 0, true);
             TileObjectData.newTile.UsesCustomCanPlace = true;
             ModifyObjectData();
             ModTileEntity tileEntity = GetTileEntity();
@@ -42,8 +42,7 @@ namespace MagicStorage.Components
             ModTranslation text = CreateMapEntryName();
             text.SetDefault("Magic Storage");
             AddMapEntry(new Color(153, 107, 61), text);
-            dustType = 7;
-            disableSmartCursor = true;
+            DustType = 7;
             TileID.Sets.HasOutlines[Type] = HasSmartInteract();
         }
 
@@ -58,16 +57,16 @@ namespace MagicStorage.Components
 
         public virtual int ItemType(int frameX, int frameY)
         {
-            return mod.ItemType("StorageComponent");
+            return ModContent.ItemType<Items.StorageComponent>();
         }
 
         public static bool IsStorageComponent(Point16 point)
         {
             Tile tile = Main.tile[point.X, point.Y];
-            return tile.active() && TileLoader.GetTile(tile.type) is StorageComponent;
+            return tile.IsActive && TileLoader.GetTile(tile.type) is StorageComponent;
         }
 
-        public int CanPlace(int i, int j, int type, int style, int direction)
+        public int CanPlace(int i, int j, int type, int style, int direction, int alternative)
         {
             int count = 0;
             if (GetTileEntity() != null && GetTileEntity() is TEStorageCenter)

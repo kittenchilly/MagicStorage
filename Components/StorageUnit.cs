@@ -20,7 +20,7 @@ namespace MagicStorage.Components
 
         public override ModTileEntity GetTileEntity()
         {
-            return mod.GetTileEntity("TEStorageUnit");
+            return (ModTileEntity)TileEntity.manager.GetTileEntity<TEStorageUnit>(ModContent.TileEntityType<TEStorageUnit>());
         }
 
         public override void MouseOver(int i, int j)
@@ -35,31 +35,31 @@ namespace MagicStorage.Components
             switch (style)
             {
             case 1:
-                type = mod.ItemType("StorageUnitDemonite");
+                type = ModContent.ItemType<Items.StorageUnitDemonite>();
                 break;
             case 2:
-                type = mod.ItemType("StorageUnitCrimtane");
+                type = ModContent.ItemType<Items.StorageUnitCrimtane>();
                 break;
             case 3:
-                type = mod.ItemType("StorageUnitHellstone");
-                break;
+                type = ModContent.ItemType<Items.StorageUnitHellstone>();
+                    break;
             case 4:
-                type = mod.ItemType("StorageUnitHallowed");
+                type = ModContent.ItemType<Items.StorageUnitHallowed>();
                 break;
             case 5:
-                type = mod.ItemType("StorageUnitBlueChlorophyte");
+                type = ModContent.ItemType<Items.StorageUnitBlueChlorophyte>();
                 break;
             case 6:
-                type = mod.ItemType("StorageUnitLuminite");
+                type = ModContent.ItemType<Items.StorageUnitLuminite>();
                 break;
             case 7:
-                type = mod.ItemType("StorageUnitTerra");
+                type = ModContent.ItemType<Items.StorageUnitTerra>();
                 break;
             case 8:
-                type = mod.ItemType("StorageUnitTiny");
-                break;
+                type = ModContent.ItemType<Items.StorageUnitTiny>();
+                    break;
             default:
-                type = mod.ItemType("StorageUnit");
+                type = ModContent.ItemType<Items.StorageUnit>();
                 break;
             }
             return type;
@@ -78,7 +78,7 @@ namespace MagicStorage.Components
             }
         }
 
-        public override bool NewRightClick(int i, int j)
+        public override bool RightClick(int i, int j)
         {
             if (Main.tile[i, j].frameX % 36 == 18)
             {
@@ -97,46 +97,46 @@ namespace MagicStorage.Components
             string activeString = storageUnit.Inactive ? "Inactive" : "Active";
             string fullnessString = storageUnit.NumItems + " / " + storageUnit.Capacity + " Items";
             Main.NewText(activeString + ", " + fullnessString);
-            return base.NewRightClick(i, j);
+            return base.RightClick(i, j);
         }
 
         private bool TryUpgrade(int i, int j)
         {
             Player player = Main.player[Main.myPlayer];
-            Item item = player.inventory[player.selectedItem];
+            Item Item = player.inventory[player.selectedItem];
             int style = Main.tile[i, j].frameY / 36;
             bool success = false;
-            if (style == 0 && item.type == mod.ItemType("UpgradeDemonite"))
+            if (style == 0 && Item.type == ModContent.ItemType<Items.UpgradeDemonite>())
             {
                 SetStyle(i, j, 1);
                 success = true;
             }
-            else if (style == 0 && item.type == mod.ItemType("UpgradeCrimtane"))
+            else if (style == 0 && Item.type == ModContent.ItemType<Items.UpgradeCrimtane>())
             {
                 SetStyle(i, j, 2);
                 success = true;
             }
-            else if ((style == 1 || style == 2) && item.type == mod.ItemType("UpgradeHellstone"))
+            else if ((style == 1 || style == 2) && Item.type == ModContent.ItemType<Items.UpgradeHellstone>())
             {
                 SetStyle(i, j, 3);
                 success = true;
             }
-            else if (style == 3 && item.type == mod.ItemType("UpgradeHallowed"))
+            else if (style == 3 && Item.type == ModContent.ItemType<Items.UpgradeHallowed>())
             {
                 SetStyle(i, j, 4);
                 success = true;
             }
-            else if (style == 4 && item.type == mod.ItemType("UpgradeBlueChlorophyte"))
+            else if (style == 4 && Item.type == ModContent.ItemType<Items.UpgradeBlueChlorophyte>())
             {
                 SetStyle(i, j, 5);
                 success = true;
             }
-            else if (style == 5 && item.type == mod.ItemType("UpgradeLuminite"))
+            else if (style == 5 && Item.type == ModContent.ItemType<Items.UpgradeLuminite>())
             {
                 SetStyle(i, j, 6);
                 success = true;
             }
-            else if (style == 6 && item.type == mod.ItemType("UpgradeTerra"))
+            else if (style == 6 && Item.type == ModContent.ItemType<Items.UpgradeTerra>())
             {
                 SetStyle(i, j, 7);
                 success = true;
@@ -145,7 +145,7 @@ namespace MagicStorage.Components
             {
                 TEStorageUnit storageUnit = (TEStorageUnit)TileEntity.ByPosition[new Point16(i, j)];
                 storageUnit.UpdateTileFrame();
-                NetMessage.SendTileRange(Main.myPlayer, i, j, 2, 2);
+                NetMessage.SendTileSquare(Main.myPlayer, i, j, 2, 2);
                 TEStorageHeart heart = storageUnit.GetHeart();
                 if (heart != null)
                 {
@@ -158,14 +158,14 @@ namespace MagicStorage.Components
                         NetHelper.SendResetCompactStage(heart.ID);
                     }
                 }
-                item.stack--;
-                if (item.stack <= 0)
+                Item.stack--;
+                if (Item.stack <= 0)
                 {
-                    item.SetDefaults(0);
+                    Item.SetDefaults(0);
                 }
                 if (player.selectedItem == 58)
                 {
-                    Main.mouseItem = item.Clone();
+                    Main.mouseItem = Item.Clone();
                 }
             }
             return success;
@@ -187,7 +187,7 @@ namespace MagicStorage.Components
             Rectangle frame = new Rectangle(tile.frameX, tile.frameY, 16, 16);
             Color lightColor = Lighting.GetColor(i, j, Color.White);
             Color color = Color.Lerp(Color.White, lightColor, 0.5f);
-            spriteBatch.Draw(mod.GetTexture("Components/StorageUnit_Glow"), drawPos, frame, color);
+            spriteBatch.Draw(ModContent.GetTexture("MagicStorage/Components/StorageUnit_Glow").Value, drawPos, frame, color);
         }
     }
 }

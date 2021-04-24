@@ -15,12 +15,12 @@ namespace MagicStorage.Components
     {
         public override ModTileEntity GetTileEntity()
         {
-            return mod.GetTileEntity("TEStorageHeart");
+            return (ModTileEntity)TileEntity.manager.GetTileEntity<TEStorageHeart>(ModContent.TileEntityType<TEStorageHeart>());
         }
 
         public override int ItemType(int frameX, int frameY)
         {
-            return mod.ItemType("StorageHeart");
+            return ModContent.ItemType<Items.StorageHeart>();
         }
 
         public override bool HasSmartInteract()
@@ -33,11 +33,11 @@ namespace MagicStorage.Components
             return (TEStorageHeart)TileEntity.ByPosition[new Point16(i, j)];
         }
 
-        public override bool NewRightClick(int i, int j)
+        public override bool RightClick(int i, int j)
         {
             Player player = Main.player[Main.myPlayer];
-            Item item = player.inventory[player.selectedItem];
-            if (item.type == mod.ItemType("Locator") || item.type == mod.ItemType("LocatorDisk") || item.type == mod.ItemType("PortableAccess"))
+            Item Item = player.inventory[player.selectedItem];
+            if (Item.type == ModContent.ItemType<Items.Locator>() || Item.type == ModContent.ItemType<Items.LocatorDisk>() || Item.type == ModContent.ItemType<Items.PortableAccess>())
             {
                 if (Main.tile[i, j].frameX % 36 == 18)
                 {
@@ -47,18 +47,18 @@ namespace MagicStorage.Components
                 {
                     j--;
                 }
-                Locator locator = (Locator)item.modItem;
+                Locator locator = (Locator)Item.ModItem;
                 locator.location = new Point16(i, j);
                 if (player.selectedItem == 58)
                 {
-                    Main.mouseItem = item.Clone();
+                    Main.mouseItem = Item.Clone();
                 }
                 Main.NewText("Locator successfully set to: X=" + i + ", Y=" + j);
                 return true;
             }
             else
             {
-                return base.NewRightClick(i, j);
+                return base.RightClick(i, j);
             }
         }
     }

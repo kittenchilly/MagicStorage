@@ -122,7 +122,7 @@ namespace MagicStorage.Components
             }
         }
 
-        public override void NetSend(BinaryWriter writer, bool lightSend)
+        public override void NetSend(BinaryWriter writer)
         {
             writer.Write((short)storageUnits.Count);
             foreach (Point16 storageUnit in storageUnits)
@@ -132,7 +132,7 @@ namespace MagicStorage.Components
             }
         }
 
-        public override void NetReceive(BinaryReader reader, bool lightReceive)
+        public override void NetReceive(BinaryReader reader)
         {
             int count = reader.ReadInt16();
             for (int k = 0; k < count; k++)

@@ -13,6 +13,7 @@ using Terraria.Localization;
 using Terraria.Map;
 using Terraria.ModLoader;
 using Terraria.UI;
+using Terraria.GameContent;
 using MagicStorage.Components;
 using MagicStorage.Sorting;
 
@@ -62,8 +63,8 @@ namespace MagicStorage
         private static float scrollBarViewSize = 1f;
         private static float scrollBarMaxViewSize = 2f;
 
-        private static List<Item> items = new List<Item>();
-        private static Dictionary<int, int> itemCounts = new Dictionary<int, int>();
+        private static List<Item> Items = new List<Item>();
+        private static Dictionary<int, int> ItemCounts = new Dictionary<int, int>();
         private static bool[] adjTiles = new bool[TileLoader.TileCount];
         private static bool adjWater = false;
         private static bool adjLava = false;
@@ -115,7 +116,7 @@ namespace MagicStorage
 
         private static Object threadLock = new Object();
         private static Object recipeLock = new Object();
-        private static Object itemsLock = new Object();
+        private static Object ItemsLock = new Object();
         private static bool threadRunning = false;
         internal static bool threadNeedsRestart = false;
         private static SortMode threadSortMode;
@@ -124,7 +125,6 @@ namespace MagicStorage
         private static List<bool> threadRecipeAvailable = new List<bool>();
         private static List<Recipe> nextRecipes = new List<Recipe>();
         private static List<bool> nextRecipeAvailable = new List<bool>();
-
         public static void Initialize()
         {
             lock (recipeLock)
@@ -134,16 +134,16 @@ namespace MagicStorage
             }
 
             InitLangStuff();
-            float itemSlotWidth = Main.inventoryBackTexture.Width * inventoryScale;
-            float itemSlotHeight = Main.inventoryBackTexture.Height * inventoryScale;
-            float smallSlotWidth = Main.inventoryBackTexture.Width * smallScale;
-            float smallSlotHeight = Main.inventoryBackTexture.Height * smallScale;
+            float ItemSlotWidth = TextureAssets.InventoryBack.Width() * inventoryScale;
+            float ItemSlotHeight = TextureAssets.InventoryBack.Height() * inventoryScale;
+            float smallSlotWidth = TextureAssets.InventoryBack.Width() * smallScale;
+            float smallSlotHeight = TextureAssets.InventoryBack.Height() * smallScale;
 
             panelTop = Main.instance.invBottom + 60;
             panelLeft = 20f;
             basePanel = new UIPanel();
             float innerPanelLeft = panelLeft + basePanel.PaddingLeft;
-            float innerPanelWidth = numColumns * (itemSlotWidth + padding) + 20f + padding;
+            float innerPanelWidth = numColumns * (ItemSlotWidth + padding) + 20f + padding;
             panelWidth = basePanel.PaddingLeft + innerPanelWidth + basePanel.PaddingRight;
             panelHeight = Main.screenHeight - panelTop - 40f;
             basePanel.Left.Set(panelLeft, 0f);
@@ -215,7 +215,7 @@ namespace MagicStorage
             basePanel.Append(recipeZone);
 
             numRows = (recipes.Count + numColumns - 1) / numColumns;
-            displayRows = (int)recipeZone.GetDimensions().Height / ((int)itemSlotHeight + padding);
+            displayRows = (int)recipeZone.GetDimensions().Height / ((int)ItemSlotHeight + padding);
             recipeZone.SetDimensions(numColumns, displayRows);
             int noDisplayRows = numRows - displayRows;
             if (noDisplayRows < 0)
@@ -223,7 +223,7 @@ namespace MagicStorage
                 noDisplayRows = 0;
             }
             scrollBarMaxViewSize = 1 + noDisplayRows;
-            scrollBar.Height.Set(displayRows * (itemSlotHeight + padding), 0f);
+            scrollBar.Height.Set(displayRows * (ItemSlotHeight + padding), 0f);
             scrollBar.Left.Set(-20f, 1f);
             scrollBar.SetView(scrollBarViewSize, scrollBarMaxViewSize);
             recipeZone.Append(scrollBar);
@@ -296,10 +296,10 @@ namespace MagicStorage
             recipePanel.Append(craftButton);
 
             resultZone.SetDimensions(1, 1);
-            resultZone.Left.Set(-itemSlotWidth, 1f);
-            resultZone.Top.Set(-itemSlotHeight, 1f);
-            resultZone.Width.Set(itemSlotWidth, 0f);
-            resultZone.Height.Set(itemSlotHeight, 0f);
+            resultZone.Left.Set(-ItemSlotWidth, 1f);
+            resultZone.Top.Set(-ItemSlotHeight, 1f);
+            resultZone.Width.Set(ItemSlotWidth, 0f);
+            resultZone.Height.Set(ItemSlotHeight, 0f);
             recipePanel.Append(resultZone);
         }
 
@@ -364,9 +364,9 @@ namespace MagicStorage
             {
                 sortButtons = new UIButtonChoice(new Texture2D[]
                 {
-                    Main.inventorySortTexture[0],
-                    MagicStorage.Instance.GetTexture("SortID"),
-                    MagicStorage.Instance.GetTexture("SortName")
+                    TextureAssets.InventorySort[0].Value,
+                    ModContent.GetTexture("MagicStorage/SortID").Value,
+                    ModContent.GetTexture("MagicStorage/SortName").Value
                 },
                 new LocalizedText[]
                 {
@@ -383,8 +383,8 @@ namespace MagicStorage
             {
                 recipeButtons = new UIButtonChoice(new Texture2D[]
                 {
-                    MagicStorage.Instance.GetTexture("RecipeAvailable"),
-                    MagicStorage.Instance.GetTexture("RecipeAll")
+                    ModContent.GetTexture("MagicStorage/RecipeAvailable").Value,
+                    ModContent.GetTexture("MagicStorage/RecipeAll").Value
                 },
                 new LocalizedText[]
                 {
@@ -400,13 +400,13 @@ namespace MagicStorage
             {
                 filterButtons = new UIButtonChoice(new Texture2D[]
                 {
-                    MagicStorage.Instance.GetTexture("FilterAll"),
-                    MagicStorage.Instance.GetTexture("FilterMelee"),
-                    MagicStorage.Instance.GetTexture("FilterPickaxe"),
-                    MagicStorage.Instance.GetTexture("FilterArmor"),
-                    MagicStorage.Instance.GetTexture("FilterPotion"),
-                    MagicStorage.Instance.GetTexture("FilterTile"),
-                    MagicStorage.Instance.GetTexture("FilterMisc"),
+                    ModContent.GetTexture("MagicStorage/FilterAll").Value,
+                    ModContent.GetTexture("MagicStorage/FilterMelee").Value,
+                    ModContent.GetTexture("MagicStorage/FilterPickaxe").Value,
+                    ModContent.GetTexture("MagicStorage/FilterArmor").Value,
+                    ModContent.GetTexture("MagicStorage/FilterPotion").Value,
+                    ModContent.GetTexture("MagicStorage/FilterTile").Value,
+                    ModContent.GetTexture("MagicStorage/FilterMisc").Value,
                 },
                 new LocalizedText[]
                 {
@@ -456,13 +456,13 @@ namespace MagicStorage
         public static void Draw(TEStorageHeart heart)
         {try{
             Player player = Main.player[Main.myPlayer];
-            StoragePlayer modPlayer = player.GetModPlayer<StoragePlayer>();
+            StoragePlayer ModPlayer = player.GetModPlayer<StoragePlayer>();
             Initialize();
             if (Main.mouseX > panelLeft && Main.mouseX < recipeLeft + panelWidth && Main.mouseY > panelTop && Main.mouseY < panelTop + panelHeight)
             {
                 player.mouseInterface = true;
-                player.showItemIcon = false;
-                InterfaceHelper.HideItemIconCache();
+                player.cursorItemIconEnabled = false;
+                    Main.ItemIconCacheVerification();
             }
             basePanel.Draw(Main.spriteBatch);
             recipePanel.Draw(Main.spriteBatch);
@@ -498,62 +498,77 @@ namespace MagicStorage
                 return new Item();
             }
             int index = slot + numColumns * (int)Math.Round(scrollBar.ViewPosition);
-            Item item = index < recipes.Count ? recipes[index].createItem : new Item();
-            if (!item.IsAir && recipes[index] == selectedRecipe)
+            Item Item = index < recipes.Count ? recipes[index].createItem : new Item();
+            if (!Item.IsAir && recipes[index] == selectedRecipe)
             {
                 context = 6;
             }
-            if (!item.IsAir && !recipeAvailable[index])
+            if (!Item.IsAir && !recipeAvailable[index])
             {
                 context = recipes[index] == selectedRecipe ? 4 : 3;
             }
-            return item;
+            return Item;
         }
 
         private static Item GetIngredient(int slot, ref int context)
         {
-            if (selectedRecipe == null || slot >= selectedRecipe.requiredItem.Length)
+            if (selectedRecipe == null || slot >= selectedRecipe.requiredItem.Count)
             {
                 return new Item();
             }
-            Item item = selectedRecipe.requiredItem[slot].Clone();
-            if (selectedRecipe.anyWood && item.type == ItemID.Wood)
+            Item Item = selectedRecipe.requiredItem[slot].Clone();
+            if (selectedRecipe.HasRecipeGroup(RecipeGroupID.Wood) && Item.type == ItemID.Wood)
             {
-                item.SetNameOverride(Lang.misc[37].Value + " " + Lang.GetItemNameValue(ItemID.Wood));
+                Item.SetNameOverride(Lang.misc[37].Value + " " + Lang.GetItemNameValue(ItemID.Wood));
             }
-            if (selectedRecipe.anySand && item.type == ItemID.SandBlock)
+            if (selectedRecipe.HasRecipeGroup(RecipeGroupID.Sand) && Item.type == ItemID.SandBlock)
             {
-                item.SetNameOverride(Lang.misc[37].Value + " " + Lang.GetItemNameValue(ItemID.SandBlock));
+                Item.SetNameOverride(Lang.misc[37].Value + " " + Lang.GetItemNameValue(ItemID.SandBlock));
             }
-            if (selectedRecipe.anyIronBar && item.type == ItemID.IronBar)
+            if (selectedRecipe.HasRecipeGroup(RecipeGroupID.IronBar) && Item.type == ItemID.IronBar)
             {
-                item.SetNameOverride(Lang.misc[37].Value + " " + Lang.GetItemNameValue(ItemID.IronBar));
+                Item.SetNameOverride(Lang.misc[37].Value + " " + Lang.GetItemNameValue(ItemID.IronBar));
             }
-            if (selectedRecipe.anyFragment && item.type == ItemID.FragmentSolar)
+            if (selectedRecipe.HasRecipeGroup(RecipeGroupID.Fragment) && Item.type == ItemID.FragmentSolar)
             {
-                item.SetNameOverride(Lang.misc[37].Value + " " + Lang.misc[51].Value);
+                Item.SetNameOverride(Lang.misc[37].Value + " " + Lang.misc[51].Value);
             }
-            if (selectedRecipe.anyPressurePlate && item.type == ItemID.GrayPressurePlate)
+            if (selectedRecipe.HasRecipeGroup(RecipeGroupID.PressurePlate) && Item.type == ItemID.GrayPressurePlate)
             {
-                item.SetNameOverride(Lang.misc[37].Value + " " + Lang.misc[38].Value);
+                Item.SetNameOverride(Lang.misc[37].Value + " " + Lang.misc[38].Value);
             }
             string nameOverride;
-            if (selectedRecipe.ProcessGroupsForText(item.type, out nameOverride))
+            if (ProcessGroupsForText(Item.type, out nameOverride))
             {
-                item.SetNameOverride(nameOverride);
+                Item.SetNameOverride(nameOverride);
             }
-            return item;
+            return Item;
+        }
+
+        internal static bool ProcessGroupsForText(int type, out string theText)
+        {
+            foreach (int num in selectedRecipe.acceptedGroups)
+            {
+                if (RecipeGroup.recipeGroups[num].ContainsItem(type))
+                {
+                    theText = RecipeGroup.recipeGroups[num].GetText();
+                    return true;
+                }
+            }
+
+            theText = "";
+            return false;
         }
 
         private static Item GetStorage(int slot, ref int context)
         {
             int index = slot + numColumns2 * (int)Math.Round(scrollBar2.ViewPosition);
-            Item item = index < storageItems.Count ? storageItems[index] : new Item();
-            if (blockStorageItems.Contains(new ItemData(item)))
+            Item Item = index < storageItems.Count ? storageItems[index] : new Item();
+            if (blockStorageItems.Contains(new ItemData(Item)))
             {
                 context = 3;
             }
-            return item;
+            return Item;
         }
 
         private static Item GetResult(int slot, ref int context)
@@ -571,7 +586,7 @@ namespace MagicStorage
             {
                 bool isEmpty = true;
                 string text = "";
-                for (int k = 0; k < selectedRecipe.requiredTile.Length; k++)
+                for (int k = 0; k < selectedRecipe.requiredTile.Count; k++)
                 {
                     if (selectedRecipe.requiredTile[k] == -1)
                     {
@@ -584,7 +599,7 @@ namespace MagicStorage
                     text += Lang.GetMapObjectName(MapHelper.TileToLookup(selectedRecipe.requiredTile[k], 0));
                     isEmpty = false;
                 }
-                if (selectedRecipe.needWater)
+                if (selectedRecipe.HasCondition(Recipe.Condition.NearWater))
                 {
                     if (!isEmpty)
                     {
@@ -593,7 +608,7 @@ namespace MagicStorage
                     text += Language.GetTextValue("LegacyInterface.53");
                     isEmpty = false;
                 }
-                if (selectedRecipe.needHoney)
+                if (selectedRecipe.HasCondition(Recipe.Condition.NearHoney))
                 {
                     if (!isEmpty)
                     {
@@ -602,7 +617,7 @@ namespace MagicStorage
                     text += Language.GetTextValue("LegacyInterface.58");
                     isEmpty = false;
                 }
-                if (selectedRecipe.needLava)
+                if (selectedRecipe.HasCondition(Recipe.Condition.NearLava))
                 {
                     if (!isEmpty)
                     {
@@ -611,7 +626,7 @@ namespace MagicStorage
                     text += Language.GetTextValue("LegacyInterface.56");
                     isEmpty = false;
                 }
-                if (selectedRecipe.needSnowBiome)
+                if (selectedRecipe.HasCondition(Recipe.Condition.InSnow))
                 {
                     if (!isEmpty)
                     {
@@ -704,7 +719,7 @@ namespace MagicStorage
                             }
                             TryCraft();
                             RefreshItems();
-                            Main.PlaySound(7, -1, -1, 1);
+                            Terraria.Audio.SoundEngine.PlaySound(7, -1, -1, 1);
                         }
                         craftTimer--;
                         flag = true;
@@ -729,15 +744,15 @@ namespace MagicStorage
         private static TEStorageHeart GetHeart()
         {
             Player player = Main.player[Main.myPlayer];
-            StoragePlayer modPlayer = player.GetModPlayer<StoragePlayer>();
-            return modPlayer.GetStorageHeart();
+            StoragePlayer ModPlayer = player.GetModPlayer<StoragePlayer>();
+            return ModPlayer.GetStorageHeart();
         }
 
         private static TECraftingAccess GetCraftingEntity()
         {
             Player player = Main.player[Main.myPlayer];
-            StoragePlayer modPlayer = player.GetModPlayer<StoragePlayer>();
-            return modPlayer.GetCraftingAccess();
+            StoragePlayer ModPlayer = player.GetModPlayer<StoragePlayer>();
+            return ModPlayer.GetCraftingAccess();
         }
 
         private static Item[] GetCraftingStations()
@@ -748,13 +763,13 @@ namespace MagicStorage
 
         public static void RefreshItems()
         {
-            items.Clear();
+            Items.Clear();
             TEStorageHeart heart = GetHeart();
             if (heart == null)
             {
                 return;
             }
-            items.AddRange(ItemSorter.SortAndFilter(heart.GetStoredItems(), SortMode.Id, FilterMode.All, "", ""));
+            Items.AddRange(ItemSorter.SortAndFilter(heart.GetStoredItems(), SortMode.Id, FilterMode.All, "", ""));
             AnalyzeIngredients();
             InitLangStuff();
             InitSortButtons();
@@ -875,7 +890,7 @@ namespace MagicStorage
         private static void AnalyzeIngredients()
         {
             Player player = Main.player[Main.myPlayer];
-            itemCounts.Clear();
+            ItemCounts.Clear();
             if (adjTiles.Length != player.adjTile.Length)
             {
                 Array.Resize(ref adjTiles, player.adjTile.Length);
@@ -890,39 +905,39 @@ namespace MagicStorage
             zoneSnow = false;
             alchemyTable = false;
 
-            foreach (Item item in items)
+            foreach (Item Item in Items)
             {
-                if (itemCounts.ContainsKey(item.netID))
+                if (ItemCounts.ContainsKey(Item.netID))
                 {
-                    itemCounts[item.netID] += item.stack;
+                    ItemCounts[Item.netID] += Item.stack;
                 }
                 else
                 {
-                    itemCounts[item.netID] = item.stack;
+                    ItemCounts[Item.netID] = Item.stack;
                 }
             }
-            foreach (Item item in GetCraftingStations())
+            foreach (Item Item in GetCraftingStations())
             {
-                if (item.createTile >= 0)
+                if (Item.createTile >= 0)
                 {
-                    adjTiles[item.createTile] = true;
-                    if (item.createTile == TileID.GlassKiln || item.createTile == TileID.Hellforge || item.createTile == TileID.AdamantiteForge)
+                    adjTiles[Item.createTile] = true;
+                    if (Item.createTile == TileID.GlassKiln || Item.createTile == TileID.Hellforge || Item.createTile == TileID.AdamantiteForge)
                     {
                         adjTiles[TileID.Furnaces] = true;
                     }
-                    if (item.createTile == TileID.AdamantiteForge)
+                    if (Item.createTile == TileID.AdamantiteForge)
                     {
                         adjTiles[TileID.Hellforge] = true;
                     }
-                    if (item.createTile == TileID.MythrilAnvil)
+                    if (Item.createTile == TileID.MythrilAnvil)
                     {
                         adjTiles[TileID.Anvils] = true;
                     }
-                    if (item.createTile == TileID.BewitchingTable || item.createTile == TileID.Tables2)
+                    if (Item.createTile == TileID.BewitchingTable || Item.createTile == TileID.Tables2)
                     {
                         adjTiles[TileID.Tables] = true;
                     }
-                    if (item.createTile == TileID.AlchemyTable)
+                    if (Item.createTile == TileID.AlchemyTable)
                     {
                         adjTiles[TileID.Bottles] = true;
                         adjTiles[TileID.Tables] = true;
@@ -938,7 +953,7 @@ namespace MagicStorage
                     player.adjLava = false;
                     player.adjHoney = false;
                     player.alchemyTable = false;
-                    TileLoader.AdjTiles(player, item.createTile);
+                    TileLoader.AdjTiles(player, Item.createTile);
                     if (player.adjWater)
                     {
                         adjWater = true;
@@ -961,24 +976,24 @@ namespace MagicStorage
                     player.adjHoney = oldAdjHoney;
                     player.alchemyTable = oldAlchemyTable;
                 }
-                if (item.type == ItemID.WaterBucket || item.type == ItemID.BottomlessBucket)
+                if (Item.type == ItemID.WaterBucket || Item.type == ItemID.BottomlessBucket)
                 {
                     adjWater = true;
                 }
-                if (item.type == ItemID.LavaBucket)
+                if (Item.type == ItemID.LavaBucket)
                 {
                     adjLava = true;
                 }
-                if (item.type == ItemID.HoneyBucket)
+                if (Item.type == ItemID.HoneyBucket)
                 {
                     adjHoney = true;
                 }
-                if (item.type == MagicStorage.Instance.ItemType("SnowBiomeEmulator"))
+                if (Item.type == ModContent.ItemType<Items.SnowBiomeEmulator>())
                 {
                     zoneSnow = true;
                 }
             }
-            adjTiles[MagicStorage.Instance.TileType("CraftingAccess")] = true;
+            adjTiles[ModContent.TileType<CraftingAccess>()] = true;
         }
 
         private static bool IsAvailable(Recipe recipe)
@@ -1002,43 +1017,43 @@ namespace MagicStorage
                 }
                 int stack = ingredient.stack;
                 bool useRecipeGroup = false;
-                foreach (int type in itemCounts.Keys)
+                foreach (int type in ItemCounts.Keys)
                 {
                     if (RecipeGroupMatch(recipe, type, ingredient.type))
                     {
-                        stack -= itemCounts[type];
+                        stack -= ItemCounts[type];
                         useRecipeGroup = true;
                     }
                 }
-                if (!useRecipeGroup && itemCounts.ContainsKey(ingredient.netID))
+                if (!useRecipeGroup && ItemCounts.ContainsKey(ingredient.netID))
                 {
-                    stack -= itemCounts[ingredient.netID];
+                    stack -= ItemCounts[ingredient.netID];
                 }
                 if (stack > 0)
                 {
                     return false;
                 }
             }
-            if (recipe.needWater && !adjWater && !adjTiles[TileID.Sinks])
+            if (recipe.HasCondition(Recipe.Condition.NearWater) && !adjWater && !adjTiles[TileID.Sinks])
             {
                 return false;
             }
-            if (recipe.needLava && !adjLava)
+            if (recipe.HasCondition(Recipe.Condition.NearLava) && !adjLava)
             {
                 return false;
             }
-            if (recipe.needHoney && !adjHoney)
+            if (recipe.HasCondition(Recipe.Condition.NearHoney) && !adjHoney)
             {
                 return false;
             }
-            if (recipe.needSnowBiome && !zoneSnow)
+            if (recipe.HasCondition(Recipe.Condition.InSnow) && !zoneSnow)
             {
                 return false;
             }
             try
             {
                 BlockRecipes.active = false;
-                if (!RecipeHooks.RecipeAvailable(recipe))
+                if (!RecipeLoader.RecipeAvailable(recipe))
                 {
                     return false;
                 }
@@ -1060,23 +1075,23 @@ namespace MagicStorage
                 }
                 int stack = ingredient.stack;
                 bool useRecipeGroup = false;
-                foreach (Item item in storageItems)
+                foreach (Item Item in storageItems)
                 {
-                    ItemData data = new ItemData(item);
-                    if (!blockStorageItems.Contains(data) && RecipeGroupMatch(recipe, item.netID, ingredient.type))
+                    ItemData data = new ItemData(Item);
+                    if (!blockStorageItems.Contains(data) && RecipeGroupMatch(recipe, Item.netID, ingredient.type))
                     {
-                        stack -= item.stack;
+                        stack -= Item.stack;
                         useRecipeGroup = true;
                     }
                 }
                 if (!useRecipeGroup)
                 {
-                    foreach (Item item in storageItems)
+                    foreach (Item Item in storageItems)
                     {
-                        ItemData data = new ItemData(item);
-                        if (!blockStorageItems.Contains(data) && item.netID == ingredient.netID)
+                        ItemData data = new ItemData(Item);
+                        if (!blockStorageItems.Contains(data) && Item.netID == ingredient.netID)
                         {
-                            stack -= item.stack;
+                            stack -= Item.stack;
                         }
                     }
                 }
@@ -1094,22 +1109,22 @@ namespace MagicStorage
             result = null;
             if (selectedRecipe != null)
             {
-                foreach (Item item in items)
+                foreach (Item Item in Items)
                 {
-                    for (int k = 0; k < selectedRecipe.requiredItem.Length; k++)
+                    for (int k = 0; k < selectedRecipe.requiredItem.Count; k++)
                     {
                         if (selectedRecipe.requiredItem[k].type == 0)
                         {
                             break;
                         }
-                        if (item.type == selectedRecipe.requiredItem[k].type || RecipeGroupMatch(selectedRecipe, selectedRecipe.requiredItem[k].type, item.type))
+                        if (Item.type == selectedRecipe.requiredItem[k].type || RecipeGroupMatch(selectedRecipe, selectedRecipe.requiredItem[k].type, Item.type))
                         {
-                            storageItems.Add(item);
+                            storageItems.Add(Item);
                         }
                     }
-                    if (item.type == selectedRecipe.createItem.type)
+                    if (Item.type == selectedRecipe.createItem.type)
                     {
-                        result = item;
+                        result = Item;
                     }
                 }
                 if (result == null)
@@ -1123,7 +1138,7 @@ namespace MagicStorage
 
         private static bool RecipeGroupMatch(Recipe recipe, int type1, int type2)
         {
-            return recipe.useWood(type1, type2) || recipe.useSand(type1, type2) || recipe.useIronBar(type1, type2) || recipe.useFragment(type1, type2) || recipe.AcceptedByItemGroups(type1, type2) || recipe.usePressurePlate(type1, type2);
+            return (recipe.HasRecipeGroup(RecipeGroupID.Wood) || recipe.HasRecipeGroup(RecipeGroupID.Sand) || recipe.HasRecipeGroup(RecipeGroupID.IronBar) || recipe.HasRecipeGroup(RecipeGroupID.Fragment) || recipe.acceptedGroups.Contains(type2) || recipe.HasRecipeGroup(RecipeGroupID.PressurePlate)) && type1 == type2;
         }
 
         private static void HoverStation(int slot, ref int hoverSlot)
@@ -1140,7 +1155,7 @@ namespace MagicStorage
                 bool changed = false;
                 if (!ent.stations[slot].IsAir && ItemSlot.ShiftInUse)
                 {
-                    Item result = player.GetItem(Main.myPlayer, DoWithdraw(slot), false, true);
+                    Item result = player.GetItem(Main.myPlayer, DoWithdraw(slot), GetItemSettings.InventoryEntityToPlayerInventorySettings);
                     if (!result.IsAir && Main.mouseItem.IsAir)
                     {
                         Main.mouseItem = result;
@@ -1170,7 +1185,7 @@ namespace MagicStorage
                 if (changed)
                 {
                     RefreshItems();
-                    Main.PlaySound(7, -1, -1, 1);
+                    Terraria.Audio.SoundEngine.PlaySound(7, -1, -1, 1);
                 }
             }
 
@@ -1248,18 +1263,18 @@ namespace MagicStorage
                     Main.mouseItem = DoWithdrawResult(toWithdraw, ItemSlot.ShiftInUse);
                     if (ItemSlot.ShiftInUse)
                     {
-                        Main.mouseItem = player.GetItem(Main.myPlayer, Main.mouseItem, false, true);
+                        Main.mouseItem = player.GetItem(Main.myPlayer, Main.mouseItem, GetItemSettings.InventoryEntityToPlayerInventorySettings);
                     }
                     changed = true;
                 }
                 if (changed)
                 {
                     RefreshItems();
-                    Main.PlaySound(7, -1, -1, 1);
+                    Terraria.Audio.SoundEngine.PlaySound(7, -1, -1, 1);
                 }
             }
 
-            if (curMouse.RightButton == ButtonState.Pressed && oldMouse.RightButton == ButtonState.Released && result != null && !result.IsAir && (Main.mouseItem.IsAir || ItemData.Matches(Main.mouseItem, items[slot]) && Main.mouseItem.stack < Main.mouseItem.maxStack))
+            if (curMouse.RightButton == ButtonState.Pressed && oldMouse.RightButton == ButtonState.Released && result != null && !result.IsAir && (Main.mouseItem.IsAir || ItemData.Matches(Main.mouseItem, Items[slot]) && Main.mouseItem.stack < Main.mouseItem.maxStack))
             {
                 slotFocus = true;
             }
@@ -1299,9 +1314,9 @@ namespace MagicStorage
                     {
                         Main.mouseItem.stack += withdrawn.stack;
                     }
-                    Main.soundInstanceMenuTick.Stop();
-                    Main.soundInstanceMenuTick = Main.soundMenuTick.CreateInstance();
-                    Main.PlaySound(12, -1, -1, 1);
+                    //Main.soundInstanceMenuTick.Stop();
+                    //Main.soundInstanceMenuTick = Main.soundMenuTick.CreateInstance();
+                    Terraria.Audio.SoundEngine.PlaySound(12, -1, -1, 1);
                     RefreshItems();
                 }
                 rightClickTimer--;
@@ -1331,40 +1346,43 @@ namespace MagicStorage
             }
         }
 
-        private static Item DoStationSwap(Item item, int slot)
+        private static Item DoStationSwap(Item Item, int slot)
         {
             TECraftingAccess access = GetCraftingEntity();
             if (Main.netMode == 0)
             {
-                Item result = access.DoStationSwap(item, slot);
+                Item result = access.DoStationSwap(Item, slot);
                 RefreshItems();
                 return result;
             }
             else
             {
-                NetHelper.SendStationSlotClick(access.ID, item, slot);
+                NetHelper.SendStationSlotClick(access.ID, Item, slot);
                 return new Item();
             }
         }
 
         private static void TryCraft()
         {
-            List<Item> availableItems = new List<Item>(storageItems.Where(item => !blockStorageItems.Contains(new ItemData(item))).Select(item => item.Clone()));
+            List<Item> availableItems = new List<Item>(storageItems.Where(Item => !blockStorageItems.Contains(new ItemData(Item))).Select(Item => Item.Clone()));
             List<Item> toWithdraw = new List<Item>();
-            for (int k = 0; k < selectedRecipe.requiredItem.Length; k++)
+            for (int k = 0; k < selectedRecipe.requiredItem.Count; k++)
             {
-                Item item = selectedRecipe.requiredItem[k];
-                if (item.type == 0)
+                Item Item = selectedRecipe.requiredItem[k];
+                if (Item.type == 0)
                 {
                     break;
                 }
-                int stack = item.stack;
-                ModRecipe modRecipe = selectedRecipe as ModRecipe;
-                if (modRecipe != null)
+                int stack = Item.stack;
+                Recipe ModRecipe = selectedRecipe as Recipe;
+                if (ModRecipe != null)
                 {
-                    stack = modRecipe.ConsumeItem(item.type, item.stack);
+                    Recipe.ConsumeItemCallback consumeItemCallback = (Recipe recipe, int type, ref int amount) => {
+                        stack = amount;
+                    };
+                    ModRecipe.AddConsumeItemCallback(consumeItemCallback);
                 }
-                if (selectedRecipe.alchemy && alchemyTable)
+                if (selectedRecipe.HasTile(TileID.AlchemyTable) && alchemyTable)
                 {
                     int save = 0;
                     for (int j = 0; j < stack; j++)
@@ -1380,7 +1398,7 @@ namespace MagicStorage
                 {
                     foreach (Item tryItem in availableItems)
                     {
-                        if (item.type == tryItem.type || RecipeGroupMatch(selectedRecipe, item.type, tryItem.type))
+                        if (Item.type == tryItem.type || RecipeGroupMatch(selectedRecipe, Item.type, tryItem.type))
                         {
                             if (tryItem.stack > stack)
                             {
@@ -1404,14 +1422,13 @@ namespace MagicStorage
             Item resultItem = selectedRecipe.createItem.Clone();
             resultItem.Prefix(-1);
 
-            RecipeHooks.OnCraft(resultItem, selectedRecipe);
-            ItemLoader.OnCraft(resultItem, selectedRecipe);
+            RecipeLoader.OnCraft(resultItem, selectedRecipe);
 
             if (Main.netMode == 0)
             {
-                foreach (Item item in DoCraft(GetHeart(), toWithdraw, resultItem))
+                foreach (Item Item in DoCraft(GetHeart(), toWithdraw, resultItem))
                 {
-                    Main.player[Main.myPlayer].QuickSpawnClonedItem(item, item.stack);
+                    Main.player[Main.myPlayer].QuickSpawnClonedItem(Item, Item.stack);
                 }
             }
             else if (Main.netMode == 1)
@@ -1422,68 +1439,68 @@ namespace MagicStorage
 
         internal static List<Item> DoCraft(TEStorageHeart heart, List<Item> toWithdraw, Item result)
         {
-            List<Item> items = new List<Item>();
+            List<Item> Items = new List<Item>();
             foreach (Item tryWithdraw in toWithdraw)
             {
                 Item withdrawn = heart.TryWithdraw(tryWithdraw);
                 if (!withdrawn.IsAir)
                 {
-                    items.Add(withdrawn);
+                    Items.Add(withdrawn);
                 }
                 if (withdrawn.stack < tryWithdraw.stack)
                 {
-                    for (int k = 0; k < items.Count; k++)
+                    for (int k = 0; k < Items.Count; k++)
                     {
-                        heart.DepositItem(items[k]);
-                        if (items[k].IsAir)
+                        heart.DepositItem(Items[k]);
+                        if (Items[k].IsAir)
                         {
-                            items.RemoveAt(k);
+                            Items.RemoveAt(k);
                             k--;
                         }
                     }
-                    return items;
+                    return Items;
                 }
             }
-            items.Clear();
+            Items.Clear();
             heart.DepositItem(result);
             if (!result.IsAir)
             {
-                items.Add(result);
+                Items.Add(result);
             }
-            return items;
+            return Items;
         }
 
-        private static bool TryDepositResult(Item item)
+        private static bool TryDepositResult(Item Item)
         {
-            int oldStack = item.stack;
-            DoDepositResult(item);
-            return oldStack != item.stack;
+            int oldStack = Item.stack;
+            DoDepositResult(Item);
+            return oldStack != Item.stack;
         }
 
-        private static void DoDepositResult(Item item)
-        {
-            TEStorageHeart heart = GetHeart();
-            if (Main.netMode == 0)
-            {
-                heart.DepositItem(item);
-            }
-            else
-            {
-                NetHelper.SendDeposit(heart.ID, item);
-                item.SetDefaults(0, true);
-            }
-        }
-
-        private static Item DoWithdrawResult(Item item, bool toInventory = false)
+        private static void DoDepositResult(Item Item)
         {
             TEStorageHeart heart = GetHeart();
             if (Main.netMode == 0)
             {
-                return heart.TryWithdraw(item);
+                heart.DepositItem(Item);
             }
             else
             {
-                NetHelper.SendWithdraw(heart.ID, item, toInventory);
+                NetHelper.SendDeposit(heart.ID, Item);
+                Item.SetDefaults(0, true);
+            }
+        }
+
+        private static Item DoWithdrawResult(Item Item, bool toInventory = false)
+        {
+            TEStorageHeart heart = GetHeart();
+            if (Main.netMode == 0)
+            {
+                return heart.TryWithdraw(Item);
+            }
+            else
+            {
+                NetHelper.SendWithdraw(heart.ID, Item, toInventory);
                 return new Item();
             }
         }

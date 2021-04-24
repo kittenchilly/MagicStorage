@@ -15,12 +15,12 @@ namespace MagicStorage.Components
     {
         public override ModTileEntity GetTileEntity()
         {
-            return mod.GetTileEntity("TERemoteAccess");
+            return (ModTileEntity)TileEntity.manager.GetTileEntity<TERemoteAccess>(ModContent.TileEntityType<TERemoteAccess>());
         }
 
         public override int ItemType(int frameX, int frameY)
         {
-            return mod.ItemType("RemoteAccess");
+            return ModContent.ItemType<Items.RemoteAccess>();
         }
 
         public override bool HasSmartInteract()
@@ -34,11 +34,11 @@ namespace MagicStorage.Components
             return ((TERemoteAccess)ent).GetHeart();
         }
 
-        public override bool NewRightClick(int i, int j)
+        public override bool RightClick(int i, int j)
         {
             Player player = Main.player[Main.myPlayer];
-            Item item = player.inventory[player.selectedItem];
-            if (item.type == mod.ItemType("Locator") || item.type == mod.ItemType("LocatorDisk"))
+            Item Item = player.inventory[player.selectedItem];
+            if (Item.type == ModContent.ItemType<Locator>() || Item.type == ModContent.ItemType<LocatorDisk>())
             {
                 if (Main.tile[i, j].frameX % 36 == 18)
                 {
@@ -49,29 +49,29 @@ namespace MagicStorage.Components
                     j--;
                 }
                 TERemoteAccess ent = (TERemoteAccess)TileEntity.ByPosition[new Point16(i, j)];
-                Locator locator = (Locator)item.modItem;
+                Locator locator = (Locator)Item.ModItem;
                 string message;
                 if (ent.TryLocate(locator.location, out message))
                 {
-                    if (item.type == mod.ItemType("LocatorDisk"))
+                    if (Item.type == ModContent.ItemType<LocatorDisk>())
                     {
                         locator.location = new Point16(-1, -1);
                     }
                     else
                     {
-                        item.SetDefaults(0);
+                        Item.SetDefaults(0);
                     }
                 }
                 if (player.selectedItem == 58)
                 {
-                    Main.mouseItem = item.Clone();
+                    Main.mouseItem = Item.Clone();
                 }
                 Main.NewText(message);
                 return true;
             }
             else
             {
-                return base.NewRightClick(i, j);
+                return base.RightClick(i, j);
             }
         }
     }

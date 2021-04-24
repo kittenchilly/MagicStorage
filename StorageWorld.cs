@@ -7,7 +7,7 @@ using Terraria.ModLoader.IO;
 
 namespace MagicStorage
 {
-    public class StorageWorld : ModWorld
+    public class StorageWorld : ModSystem
     {
         private const int saveVersion = 0;
         public static bool kingSlimeDiamond = false;
@@ -15,7 +15,7 @@ namespace MagicStorage
         public static bool boss2Diamond = false;
         public static bool boss3Diamond = false;
         public static bool queenBeeDiamond = false;
-        public static bool hardmodeDiamond = false;
+        public static bool hardModeDiamond = false;
         public static bool mechBoss1Diamond = false;
         public static bool mechBoss2Diamond = false;
         public static bool mechBoss3Diamond = false;
@@ -25,14 +25,14 @@ namespace MagicStorage
         public static bool ancientCultistDiamond = false;
         public static bool moonlordDiamond = false;
 
-        public override void Initialize()
+        public override void OnWorldLoad()
         {
             kingSlimeDiamond = false;
             boss1Diamond = false;
             boss2Diamond = false;
             boss3Diamond = false;
             queenBeeDiamond = false;
-            hardmodeDiamond = false;
+            hardModeDiamond = false;
             mechBoss1Diamond = false;
             mechBoss2Diamond = false;
             mechBoss3Diamond = false;
@@ -43,7 +43,7 @@ namespace MagicStorage
             moonlordDiamond = false;
         }
 
-        public override TagCompound Save()
+        public override TagCompound SaveWorldData()
         {
             TagCompound tag = new TagCompound();
             tag["saveVersion"] = saveVersion;
@@ -52,7 +52,7 @@ namespace MagicStorage
             tag["boss2Diamond"] = boss2Diamond;
             tag["boss3Diamond"] = boss3Diamond;
             tag["queenBeeDiamond"] = queenBeeDiamond;
-            tag["hardmodeDiamond"] = hardmodeDiamond;
+            tag["hardModeDiamond"] = hardModeDiamond;
             tag["mechBoss1Diamond"] = mechBoss1Diamond;
             tag["mechBoss2Diamond"] = mechBoss2Diamond;
             tag["mechBoss3Diamond"] = mechBoss3Diamond;
@@ -63,15 +63,14 @@ namespace MagicStorage
             tag["moonlordDiamond"] = moonlordDiamond;
             return tag;
         }
-
-        public override void Load(TagCompound tag)
+        public override void LoadWorldData(TagCompound tag)
         {
             kingSlimeDiamond = tag.GetBool("kingSlimeDiamond");
             boss1Diamond = tag.GetBool("boss1Diamond");
             boss2Diamond = tag.GetBool("boss2Diamond");
             boss3Diamond = tag.GetBool("boss3Diamond");
             queenBeeDiamond = tag.GetBool("queenBeeDiamond");
-            hardmodeDiamond = tag.GetBool("hardmodeDiamond");
+            hardModeDiamond = tag.GetBool("hardModeDiamond");
             mechBoss1Diamond = tag.GetBool("mechBoss1Diamond");
             mechBoss2Diamond = tag.GetBool("mechBoss2Diamond");
             mechBoss3Diamond = tag.GetBool("mechBoss3Diamond");

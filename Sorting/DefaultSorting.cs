@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace MagicStorage.Sorting
 {
@@ -12,9 +13,9 @@ namespace MagicStorage.Sorting
             SortClassList.Initialize();
         }
 
-        public override int Compare(Item item1, Item item2)
+        public override int Compare(Item Item1, Item Item2)
         {
-            return SortClassList.Compare(item1, item2);
+            return SortClassList.Compare(Item1, Item2);
         }
     }
 
@@ -23,13 +24,13 @@ namespace MagicStorage.Sorting
         private static bool initialized = false;
         private static List<DefaultSortClass> classes = new List<DefaultSortClass>();
 
-        public static int Compare(Item item1, Item item2)
+        public static int Compare(Item Item1, Item Item2)
         {
             int class1 = classes.Count;
             int class2 = classes.Count;
             for (int k = 0; k < classes.Count; k++)
             {
-                if (classes[k].Pass(item1))
+                if (classes[k].Pass(Item1))
                 {
                     class1 = k;
                     break;
@@ -37,7 +38,7 @@ namespace MagicStorage.Sorting
             }
             for (int k = 0; k < classes.Count; k++)
             {
-                if (classes[k].Pass(item2))
+                if (classes[k].Pass(Item2))
                 {
                     class2 = k;
                     break;
@@ -47,7 +48,7 @@ namespace MagicStorage.Sorting
             {
                 return class1 - class2;
             }
-            return classes[class1].Compare(item1, item2);
+            return classes[class1].Compare(Item1, Item2);
         }
 
         public static void Initialize()
@@ -95,339 +96,339 @@ namespace MagicStorage.Sorting
             classes.Add(new DefaultSortClass(CommonTile, CompareName));
         }
 
-        private static bool MeleeWeapon(Item item)
+        private static bool MeleeWeapon(Item Item)
         {
-            return item.maxStack == 1 && item.damage > 0 && item.ammo == 0 && item.melee && item.pick < 1 && item.hammer < 1 && item.axe < 1;
+            return Item.maxStack == 1 && Item.damage > 0 && Item.ammo == 0 && Item.DamageType == DamageClass.Melee && Item.pick < 1 && Item.hammer < 1 && Item.axe < 1;
         }
 
-        private static bool RangedWeapon(Item item)
+        private static bool RangedWeapon(Item Item)
         {
-            return item.maxStack == 1 && item.damage > 0 && item.ammo == 0 && item.ranged;
+            return Item.maxStack == 1 && Item.damage > 0 && Item.ammo == 0 && Item.DamageType == DamageClass.Ranged;
         }
 
-        private static bool MagicWeapon(Item item)
+        private static bool MagicWeapon(Item Item)
         {
-            return item.maxStack == 1 && item.damage > 0 && item.ammo == 0 && item.magic;
+            return Item.maxStack == 1 && Item.damage > 0 && Item.ammo == 0 && Item.DamageType == DamageClass.Magic;
         }
 
-        private static bool SummonWeapon(Item item)
+        private static bool SummonWeapon(Item Item)
         {
-            return item.maxStack == 1 && item.damage > 0 && item.summon;
+            return Item.maxStack == 1 && Item.damage > 0 && Item.DamageType == DamageClass.Summon;
         }
 
-        private static bool ThrownWeapon(Item item)
+        private static bool ThrownWeapon(Item Item)
         {
-            return item.damage > 0 && (item.ammo == 0 || item.notAmmo) && item.shoot > 0 && item.thrown;
+            return Item.damage > 0 && (Item.ammo == 0 || Item.notAmmo) && Item.shoot > 0 && Item.DamageType == DamageClass.Throwing;
         }
 
-        private static bool Weapon(Item item)
+        private static bool Weapon(Item Item)
         {
-            return item.damage > 0 && item.ammo == 0 && item.pick == 0 && item.axe == 0 && item.hammer == 0;
+            return Item.damage > 0 && Item.ammo == 0 && Item.pick == 0 && Item.axe == 0 && Item.hammer == 0;
         }
 
-        private static bool Ammo(Item item)
+        private static bool Ammo(Item Item)
         {
-            return item.ammo > 0 && item.damage > 0;
+            return Item.ammo > 0 && Item.damage > 0;
         }
 
-        private static bool Picksaw(Item item)
+        private static bool Picksaw(Item Item)
         {
-            return item.pick > 0 && item.axe > 0;
+            return Item.pick > 0 && Item.axe > 0;
         }
 
-        private static bool Hamaxe(Item item)
+        private static bool Hamaxe(Item Item)
         {
-            return item.hammer > 0 && item.axe > 0;
+            return Item.hammer > 0 && Item.axe > 0;
         }
 
-        private static bool Pickaxe(Item item)
+        private static bool Pickaxe(Item Item)
         {
-            return item.pick > 0;
+            return Item.pick > 0;
         }
 
-        private static bool Axe(Item item)
+        private static bool Axe(Item Item)
         {
-            return item.axe > 0;
+            return Item.axe > 0;
         }
 
-        private static bool Hammer(Item item)
+        private static bool Hammer(Item Item)
         {
-            return item.hammer > 0;
+            return Item.hammer > 0;
         }
 
-        private static bool TerraformingTool(Item item)
+        private static bool TerraformingTool(Item Item)
         {
-            return ItemID.Sets.SortingPriorityTerraforming[item.type] >= 0;
+            return ItemID.Sets.SortingPriorityTerraforming[Item.type] >= 0;
         }
 
-        private static bool AmmoTool(Item item)
+        private static bool AmmoTool(Item Item)
         {
-            return item.ammo > 0;
+            return Item.ammo > 0;
         }
 
-        private static bool Armor(Item item)
+        private static bool Armor(Item Item)
         {
-            return (item.headSlot >= 0 || item.bodySlot >= 0 || item.legSlot >= 0) && !item.vanity;
+            return (Item.headSlot >= 0 || Item.bodySlot >= 0 || Item.legSlot >= 0) && !Item.vanity;
         }
 
-        private static bool VanityArmor(Item item)
+        private static bool VanityArmor(Item Item)
         {
-            return (item.headSlot >= 0 || item.bodySlot >= 0 || item.legSlot >= 0) && item.vanity;
+            return (Item.headSlot >= 0 || Item.bodySlot >= 0 || Item.legSlot >= 0) && Item.vanity;
         }
 
-        private static bool Accessory(Item item)
+        private static bool Accessory(Item Item)
         {
-            return item.accessory;
+            return Item.accessory;
         }
 
-        private static bool Grapple(Item item)
+        private static bool Grapple(Item Item)
         {
-            return Main.projHook[item.shoot];
+            return Main.projHook[Item.shoot];
         }
 
-        private static bool Mount(Item item)
+        private static bool Mount(Item Item)
         {
-            return item.mountType != -1 && !MountID.Sets.Cart[item.mountType];
+            return Item.mountType != -1 && !MountID.Sets.Cart[Item.mountType];
         }
 
-        private static bool Cart(Item item)
+        private static bool Cart(Item Item)
         {
-            return item.mountType != -1 && MountID.Sets.Cart[item.mountType];
+            return Item.mountType != -1 && MountID.Sets.Cart[Item.mountType];
         }
 
-        private static bool LightPet(Item item)
+        private static bool LightPet(Item Item)
         {
-            return item.buffType > 0 && Main.lightPet[item.buffType];
+            return Item.buffType > 0 && Main.lightPet[Item.buffType];
         }
 
-        private static bool VanityPet(Item item)
+        private static bool VanityPet(Item Item)
         {
-            return item.buffType > 0 && Main.vanityPet[item.buffType];
+            return Item.buffType > 0 && Main.vanityPet[Item.buffType];
         }
 
-        private static bool Dye(Item item)
+        private static bool Dye(Item Item)
         {
-            return item.dye > 0;
+            return Item.dye > 0;
         }
 
-        private static bool HairDye(Item item)
+        private static bool HairDye(Item Item)
         {
-            return item.hairDye >= 0;
+            return Item.hairDye >= 0;
         }
 
-        private static bool HealthPotion(Item item)
+        private static bool HealthPotion(Item Item)
         {
-            return item.consumable && item.healLife > 0 && item.healMana < 1;
+            return Item.consumable && Item.healLife > 0 && Item.healMana < 1;
         }
 
-        private static bool ManaPotion(Item item)
+        private static bool ManaPotion(Item Item)
         {
-            return item.consumable && item.healLife < 1 && item.healMana > 0;
+            return Item.consumable && Item.healLife < 1 && Item.healMana > 0;
         }
 
-        private static bool Elixir(Item item)
+        private static bool Elixir(Item Item)
         {
-            return item.consumable && item.healLife > 0 && item.healMana > 0;
+            return Item.consumable && Item.healLife > 0 && Item.healMana > 0;
         }
 
-        private static bool BuffPotion(Item item)
+        private static bool BuffPotion(Item Item)
         {
-            return item.consumable && item.buffType > 0;
+            return Item.consumable && Item.buffType > 0;
         }
 
-        private static bool BossSpawn(Item item)
+        private static bool BossSpawn(Item Item)
         {
-            return ItemID.Sets.SortingPriorityBossSpawns[item.type] >= 0;
+            return ItemID.Sets.SortingPriorityBossSpawns[Item.type] >= 0;
         }
 
-        private static bool Painting(Item item)
+        private static bool Painting(Item Item)
         {
-            return ItemID.Sets.SortingPriorityPainting[item.type] >= 0 || item.paint > 0;
+            return ItemID.Sets.SortingPriorityPainting[Item.type] >= 0 || Item.paint > 0;
         }
 
-        private static bool Wiring(Item item)
+        private static bool Wiring(Item Item)
         {
-            return ItemID.Sets.SortingPriorityWiring[item.type] >= 0 || item.mech;
+            return ItemID.Sets.SortingPriorityWiring[Item.type] >= 0 || Item.mech;
         }
 
-        private static bool Material(Item item)
+        private static bool Material(Item Item)
         {
-            return ItemID.Sets.SortingPriorityMaterials[item.type] >= 0;
+            return ItemID.Sets.SortingPriorityMaterials[Item.type] >= 0;
         }
 
-        private static bool Rope(Item item)
+        private static bool Rope(Item Item)
         {
-            return ItemID.Sets.SortingPriorityRopes[item.type] >= 0;
+            return ItemID.Sets.SortingPriorityRopes[Item.type] >= 0;
         }
 
-        private static bool Extractible(Item item)
+        private static bool Extractible(Item Item)
         {
-            return ItemID.Sets.SortingPriorityExtractibles[item.type] >= 0;
+            return ItemID.Sets.SortingPriorityExtractibles[Item.type] >= 0;
         }
 
-        private static bool Misc(Item item)
+        private static bool Misc(Item Item)
         {
-            return item.createTile < 0 && item.createWall < 1;
+            return Item.createTile < 0 && Item.createWall < 1;
         }
 
-        private static bool FrameImportantTile(Item item)
+        private static bool FrameImportantTile(Item Item)
         {
-            return item.createTile >= 0 && Main.tileFrameImportant[item.createTile];
+            return Item.createTile >= 0 && Main.tileFrameImportant[Item.createTile];
         }
 
-        private static bool CommonTile(Item item)
+        private static bool CommonTile(Item Item)
         {
-            return item.createTile >= 0 || item.createWall > 0;
+            return Item.createTile >= 0 || Item.createWall > 0;
         }
 
-        private static int CompareRarity(Item item1, Item item2)
+        private static int CompareRarity(Item Item1, Item Item2)
         {
-            return item2.rare - item1.rare;
+            return Item2.rare - Item1.rare;
         }
 
-        private static int ComparePicksaw(Item item1, Item item2)
+        private static int ComparePicksaw(Item Item1, Item Item2)
         {
-            int result = item1.pick - item2.pick;
+            int result = Item1.pick - Item2.pick;
             if (result == 0)
             {
-                result = item1.axe - item2.axe;
+                result = Item1.axe - Item2.axe;
             }
             return result;
         }
 
-        private static int CompareHamaxe(Item item1, Item item2)
+        private static int CompareHamaxe(Item Item1, Item Item2)
         {
-            int result = item1.axe - item2.axe;
+            int result = Item1.axe - Item2.axe;
             if (result == 0)
             {
-                result = item1.hammer - item2.hammer;
+                result = Item1.hammer - Item2.hammer;
             }
             return result;
         }
 
-        private static int ComparePickaxe(Item item1, Item item2)
+        private static int ComparePickaxe(Item Item1, Item Item2)
         {
-            return item1.pick - item2.pick;
+            return Item1.pick - Item2.pick;
         }
 
-        private static int CompareAxe(Item item1, Item item2)
+        private static int CompareAxe(Item Item1, Item Item2)
         {
-            return item1.axe - item2.axe;
+            return Item1.axe - Item2.axe;
         }
 
-        private static int CompareHammer(Item item1, Item item2)
+        private static int CompareHammer(Item Item1, Item Item2)
         {
-            return item1.hammer - item2.hammer;
+            return Item1.hammer - Item2.hammer;
         }
 
-        private static int CompareTerraformingPriority(Item item1, Item item2)
+        private static int CompareTerraformingPriority(Item Item1, Item Item2)
         {
-            return ItemID.Sets.SortingPriorityTerraforming[item1.type] - ItemID.Sets.SortingPriorityTerraforming[item2.type];
+            return ItemID.Sets.SortingPriorityTerraforming[Item1.type] - ItemID.Sets.SortingPriorityTerraforming[Item2.type];
         }
 
-        private static int CompareAccessory(Item item1, Item item2)
+        private static int CompareAccessory(Item Item1, Item Item2)
         {
-            int result = item1.vanity.CompareTo(item2.vanity);
+            int result = Item1.vanity.CompareTo(Item2.vanity);
             if (result == 0)
             {
-                result = CompareRarity(item1, item2);
+                result = CompareRarity(Item1, Item2);
             }
             return result;
         }
 
-        private static int CompareDye(Item item1, Item item2)
+        private static int CompareDye(Item Item1, Item Item2)
         {
-            int result = CompareRarity(item1, item2);
+            int result = CompareRarity(Item1, Item2);
             if (result == 0)
             {
-                result = item2.dye - item1.dye;
+                result = Item2.dye - Item1.dye;
             }
             return result;
         }
 
-        private static int CompareHairDye(Item item1, Item item2)
+        private static int CompareHairDye(Item Item1, Item Item2)
         {
-            int result = CompareRarity(item1, item2);
+            int result = CompareRarity(Item1, Item2);
             if (result == 0)
             {
-                result = item2.hairDye - item1.hairDye;
+                result = Item2.hairDye - Item1.hairDye;
             }
             return result;
         }
 
-        private static int CompareHealing(Item item1, Item item2)
+        private static int CompareHealing(Item Item1, Item Item2)
         {
-            return item2.healLife - item1.healLife;
+            return Item2.healLife - Item1.healLife;
         }
 
-        private static int CompareMana(Item item1, Item item2)
+        private static int CompareMana(Item Item1, Item Item2)
         {
-            return item2.mana - item1.mana;
+            return Item2.mana - Item1.mana;
         }
 
-        private static int CompareElixir(Item item1, Item item2)
+        private static int CompareElixir(Item Item1, Item Item2)
         {
-            int result = CompareHealing(item1, item2);
+            int result = CompareHealing(Item1, Item2);
             if (result == 0)
             {
-                result = CompareMana(item1, item2);
+                result = CompareMana(Item1, Item2);
             }
             return result;
         }
 
-        private static int CompareBossSpawn(Item item1, Item item2)
+        private static int CompareBossSpawn(Item Item1, Item Item2)
         {
-            return ItemID.Sets.SortingPriorityBossSpawns[item1.type] - ItemID.Sets.SortingPriorityBossSpawns[item2.type];
+            return ItemID.Sets.SortingPriorityBossSpawns[Item1.type] - ItemID.Sets.SortingPriorityBossSpawns[Item2.type];
         }
 
-        private static int ComparePainting(Item item1, Item item2)
+        private static int ComparePainting(Item Item1, Item Item2)
         {
-            int result = ItemID.Sets.SortingPriorityPainting[item2.type] - ItemID.Sets.SortingPriorityPainting[item1.type];
+            int result = ItemID.Sets.SortingPriorityPainting[Item2.type] - ItemID.Sets.SortingPriorityPainting[Item1.type];
             if (result == 0)
             {
-                result = item1.paint - item2.paint;
+                result = Item1.paint - Item2.paint;
             }
             return result;
         }
 
-        private static int CompareWiring(Item item1, Item item2)
+        private static int CompareWiring(Item Item1, Item Item2)
         {
-            int result = ItemID.Sets.SortingPriorityWiring[item2.type] - ItemID.Sets.SortingPriorityWiring[item1.type];
+            int result = ItemID.Sets.SortingPriorityWiring[Item2.type] - ItemID.Sets.SortingPriorityWiring[Item1.type];
             if (result == 0)
             {
-                result = CompareRarity(item1, item2);
+                result = CompareRarity(Item1, Item2);
             }
             return result;
         }
 
-        private static int CompareMaterial(Item item1, Item item2)
+        private static int CompareMaterial(Item Item1, Item Item2)
         {
-            return ItemID.Sets.SortingPriorityMaterials[item2.type] - ItemID.Sets.SortingPriorityMaterials[item1.type];
+            return ItemID.Sets.SortingPriorityMaterials[Item2.type] - ItemID.Sets.SortingPriorityMaterials[Item1.type];
         }
 
-        private static int CompareRope(Item item1, Item item2)
+        private static int CompareRope(Item Item1, Item Item2)
         {
-            return ItemID.Sets.SortingPriorityRopes[item2.type] - ItemID.Sets.SortingPriorityRopes[item1.type];
+            return ItemID.Sets.SortingPriorityRopes[Item2.type] - ItemID.Sets.SortingPriorityRopes[Item1.type];
         }
 
-        private static int CompareExtractible(Item item1, Item item2)
+        private static int CompareExtractible(Item Item1, Item Item2)
         {
-            return ItemID.Sets.SortingPriorityExtractibles[item2.type] - ItemID.Sets.SortingPriorityExtractibles[item1.type];
+            return ItemID.Sets.SortingPriorityExtractibles[Item2.type] - ItemID.Sets.SortingPriorityExtractibles[Item1.type];
         }
 
-        private static int CompareMisc(Item item1, Item item2)
+        private static int CompareMisc(Item Item1, Item Item2)
         {
-            int result = CompareRarity(item1, item2);
+            int result = CompareRarity(Item1, Item2);
             if (result == 0)
             {
-                result = item2.value - item1.value;
+                result = Item2.value - Item1.value;
             }
             return result;
         }
 
-        private static int CompareName(Item item1, Item item2)
+        private static int CompareName(Item Item1, Item Item2)
         {
-            return string.Compare(item1.Name, item2.Name, StringComparison.OrdinalIgnoreCase);
+            return string.Compare(Item1.Name, Item2.Name, StringComparison.OrdinalIgnoreCase);
         }
     }
 
@@ -442,14 +443,14 @@ namespace MagicStorage.Sorting
             this.compareFunc = compareFunc;
         }
 
-        public bool Pass(Item item)
+        public bool Pass(Item Item)
         {
-            return passFunc(item);
+            return passFunc(Item);
         }
 
-        public int Compare(Item item1, Item item2)
+        public int Compare(Item Item1, Item Item2)
         {
-            return compareFunc(item1, item2);
+            return compareFunc(Item1, Item2);
         }
     }
 }

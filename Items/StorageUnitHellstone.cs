@@ -11,43 +11,41 @@ namespace MagicStorage.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Hellstone Storage Unit");
-            DisplayName.AddTranslation(GameCulture.Russian, "Адская Ячейка Хранилища");
-            DisplayName.AddTranslation(GameCulture.Polish, "Jednostka magazynująca (Piekielny kamień)");
-            DisplayName.AddTranslation(GameCulture.French, "Unité de stockage (Infernale)");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Unidad de Almacenamiento (Piedra Infernal)");
-            DisplayName.AddTranslation(GameCulture.Chinese, "存储单元(狱岩)");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Russian, "Адская Ячейка Хранилища");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Polish, "Jednostka magazynująca (Piekielny kamień)");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.French, "Unité de stockage (Infernale)");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Spanish, "Unidad de Almacenamiento (Piedra Infernal)");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Chinese, "存储单元(狱岩)");
         }
 
         public override void SetDefaults()
         {
-            item.width = 26;
-            item.height = 26;
-            item.maxStack = 99;
-            item.useTurn = true;
-            item.autoReuse = true;
-            item.useAnimation = 15;
-            item.useTime = 10;
-            item.useStyle = 1;
-            item.consumable = true;
-            item.rare = 2;
-            item.value = Item.sellPrice(0, 0, 50, 0);
-            item.createTile = mod.TileType("StorageUnit");
-            item.placeStyle = 3;
+            Item.width = 26;
+            Item.height = 26;
+            Item.maxStack = 99;
+            Item.useTurn = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.useStyle = 1;
+            Item.consumable = true;
+            Item.rare = 2;
+            Item.value = Item.sellPrice(0, 0, 50, 0);
+            Item.createTile = ModContent.TileType<Components.StorageUnit>();
+            Item.placeStyle = 3;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.ItemType("StorageUnitDemonite"));
-            recipe.AddIngredient(mod.ItemType("UpgradeHellstone"));
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe()
+            .AddIngredient(ModContent.ItemType<Items.StorageUnitDemonite>())
+            .AddIngredient(ModContent.ItemType<Items.UpgradeHellstone>())
+            .Register();
 
-            recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.ItemType("StorageUnitCrimtane"));
-            recipe.AddIngredient(mod.ItemType("UpgradeHellstone"));
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe()
+            .AddIngredient(ModContent.ItemType<Items.StorageUnitCrimtane>())
+            .AddIngredient(ModContent.ItemType<Items.UpgradeHellstone>())
+            .Register();
         }
     }
 }

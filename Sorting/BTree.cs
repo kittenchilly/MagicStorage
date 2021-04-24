@@ -17,11 +17,11 @@ namespace MagicStorage.Sorting
             this.func = func;
         }
 
-        public void Insert(T item)
+        public void Insert(T Item)
         {
             T pushedItem;
             BTreeNode<T> pushedBranch;
-            if (root.Insert(item, out pushedItem, out pushedBranch))
+            if (root.Insert(Item, out pushedItem, out pushedBranch))
             {
                 BTreeNode<T> newRoot = new BTreeNode<T>(func, root, pushedItem, pushedBranch);
                 root = newRoot;
@@ -57,11 +57,11 @@ namespace MagicStorage.Sorting
             this.branches.Add(branch2);
         }
 
-        internal bool Insert(T item, out T pushItem, out BTreeNode<T> pushBranch)
+        internal bool Insert(T Item, out T pushItem, out BTreeNode<T> pushBranch)
         {
             if (isLeaf)
             {
-                InsertIntoElements(item);
+                InsertIntoElements(Item);
                 if (elements.Count == branchFactor)
                 {
                     Split(out pushItem, out pushBranch);
@@ -75,7 +75,7 @@ namespace MagicStorage.Sorting
             {
                 T pushedItem;
                 BTreeNode<T> pushedBranch;
-                int splitBranch = InsertIntoBranch(item, out pushedItem, out pushedBranch);
+                int splitBranch = InsertIntoBranch(Item, out pushedItem, out pushedBranch);
                 if (splitBranch >= 0)
                 {
                     branches.Insert(splitBranch + 1, pushedBranch);
@@ -92,14 +92,14 @@ namespace MagicStorage.Sorting
             }
         }
 
-        private int InsertIntoElements(T item)
+        private int InsertIntoElements(T Item)
         {
             int min = 0;
             int max = elements.Count;
             while (min < max)
             {
                 int check = (min + max) / 2;
-                int result = func.Compare(item, elements[check]);
+                int result = func.Compare(Item, elements[check]);
                 if (result < 0)
                 {
                     max = check;
@@ -108,9 +108,9 @@ namespace MagicStorage.Sorting
                 {
                     min = check + 1;
                 }
-                else if (item is Item)
+                else if (Item is Item)
                 {
-                    result = ItemData.Compare((Item)(object)item, (Item)(object)elements[check]);
+                    result = ItemData.Compare((Item)(object)Item, (Item)(object)elements[check]);
                     if (result < 0)
                     {
                         max = check;
@@ -121,7 +121,7 @@ namespace MagicStorage.Sorting
                     }
                     else
                     {
-                        ((Item)(object)elements[check]).stack += ((Item)(object)item).stack;
+                        ((Item)(object)elements[check]).stack += ((Item)(object)Item).stack;
                         return -1;
                     }
                 }
@@ -130,18 +130,18 @@ namespace MagicStorage.Sorting
                     min = check + 1;
                 }
             }
-            elements.Insert(min, item is Item ? (T)(object)((Item)(object)item).Clone() : item);
+            elements.Insert(min, Item is Item ? (T)(object)((Item)(object)Item).Clone() : Item);
             return min;
         }
 
-        private int InsertIntoBranch(T item, out T pushItem, out BTreeNode<T> pushNode)
+        private int InsertIntoBranch(T Item, out T pushItem, out BTreeNode<T> pushNode)
         {
             int min = 0;
             int max = elements.Count;
             while (min < max)
             {
                 int check = (min + max) / 2;
-                int result = func.Compare(item, elements[check]);
+                int result = func.Compare(Item, elements[check]);
                 if (result < 0)
                 {
                     max = check;
@@ -150,9 +150,9 @@ namespace MagicStorage.Sorting
                 {
                     min = check + 1;
                 }
-                else if (item is Item)
+                else if (Item is Item)
                 {
-                    result = ItemData.Compare((Item)(object)item, (Item)(object)elements[check]);
+                    result = ItemData.Compare((Item)(object)Item, (Item)(object)elements[check]);
                     if (result < 0)
                     {
                         max = check;
@@ -163,7 +163,7 @@ namespace MagicStorage.Sorting
                     }
                     else
                     {
-                        ((Item)(object)elements[check]).stack += ((Item)(object)item).stack;
+                        ((Item)(object)elements[check]).stack += ((Item)(object)Item).stack;
                         pushItem = default(T);
                         pushNode = null;
                         return -1;
@@ -174,7 +174,7 @@ namespace MagicStorage.Sorting
                     min = check + 1;
                 }
             }
-            if (branches[min].Insert(item, out pushItem, out pushNode))
+            if (branches[min].Insert(Item, out pushItem, out pushNode))
             {
                 return min;
             }

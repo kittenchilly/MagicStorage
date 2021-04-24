@@ -13,36 +13,36 @@ namespace MagicStorage.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Storage Unit Wand");
-            DisplayName.AddTranslation(GameCulture.Russian, "Жезл Ячейки Хранилища");
-            DisplayName.AddTranslation(GameCulture.Polish, "Różdżka jednostki magazynującej");
-            DisplayName.AddTranslation(GameCulture.French, "Baguette d'unité de stockage");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Varita de unidad de almacenamiento");
-            DisplayName.AddTranslation(GameCulture.French, "Baguetter d'unité de stockage");
-            DisplayName.AddTranslation(GameCulture.Chinese, "存储单元魔杖");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Russian, "Жезл Ячейки Хранилища");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Polish, "Różdżka jednostki magazynującej");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.French, "Baguette d'unité de stockage");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Spanish, "Varita de unidad de almacenamiento");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.French, "Baguetter d'unité de stockage");
+            DisplayName.AddTranslation((int)GameCulture.CultureName.Chinese, "存储单元魔杖");
 
             Tooltip.SetDefault("<right> Storage Unit to toggle between Active/Inactive");
-            Tooltip.AddTranslation(GameCulture.Russian, "<right> на Ячейке Хранилища что бы активировать/деактивировать ее");
-            Tooltip.AddTranslation(GameCulture.Polish, "<right> aby przełączyć Jednostkę Magazynującą (wł./wył.)");
-            Tooltip.AddTranslation(GameCulture.French, "<right> pour changer l'unité de stockage actif/inactif");
-            Tooltip.AddTranslation(GameCulture.Spanish, "<right> para cambiar el unidad de almacenamiento activo/inactivo");
-            Tooltip.AddTranslation(GameCulture.Chinese, "<right>存储单元使其切换启用/禁用");
+            Tooltip.AddTranslation((int)GameCulture.CultureName.Russian, "<right> на Ячейке Хранилища что бы активировать/деактивировать ее");
+            Tooltip.AddTranslation((int)GameCulture.CultureName.Polish, "<right> aby przełączyć Jednostkę Magazynującą (wł./wył.)");
+            Tooltip.AddTranslation((int)GameCulture.CultureName.French, "<right> pour changer l'unité de stockage actif/inactif");
+            Tooltip.AddTranslation((int)GameCulture.CultureName.Spanish, "<right> para cambiar el unidad de almacenamiento activo/inactivo");
+            Tooltip.AddTranslation((int)GameCulture.CultureName.Chinese, "<right>存储单元使其切换启用/禁用");
         }
 
         public override void SetDefaults()
         {
-            item.width = 24;
-            item.height = 28;
-            item.useTurn = true;
-            item.autoReuse = true;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.useStyle = 1;
-            item.tileBoost = 20;
-            item.rare = 1;
-            item.value = Item.sellPrice(0, 0, 40, 0);
+            Item.width = 24;
+            Item.height = 28;
+            Item.useTurn = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.useStyle = 1;
+            Item.tileBoost = 20;
+            Item.rare = 1;
+            Item.value = Item.sellPrice(0, 0, 40, 0);
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             if (player.whoAmI == Main.myPlayer && player.itemAnimation > 0 && player.itemTime == 0 && player.controlUseItem)
             {
@@ -79,12 +79,11 @@ namespace MagicStorage.Items
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.ActuationRod);
-            recipe.AddIngredient(null, "StorageComponent");
-            recipe.AddTile(TileID.Anvils);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe()
+            .AddIngredient(ItemID.ActuationRod)
+            .AddIngredient(ModContent.ItemType<StorageComponent>())
+            .AddTile(TileID.Anvils)
+            .Register();
         }
     }
 }

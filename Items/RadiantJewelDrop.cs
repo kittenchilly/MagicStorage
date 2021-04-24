@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -8,11 +9,11 @@ namespace MagicStorage.Items
 {
     public class RadiantJewelDrop : GlobalNPC
     {
-        public override void NPCLoot(NPC npc)
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
-            if (npc.type == NPCID.MoonLordCore && !Main.expertMode && Main.rand.Next(20) == 0)
+            if (npc.type == NPCID.MoonLordCore)
             {
-                Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("RadiantJewel"));
+                npcLoot.Add(ItemDropRule.ByCondition(new Conditions.NotExpert(), ModContent.ItemType<Items.RadiantJewel>(), 20));
             }
         }
     }

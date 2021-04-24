@@ -12,12 +12,12 @@ namespace MagicStorage.Components
         public override bool ValidTile(int i, int j)
         {
             Tile tile = Main.tile[i, j];
-            return tile.active() && ValidTile(tile);
+            return tile.IsActive && ValidTile(tile);
         }
 
         public abstract bool ValidTile(Tile tile);
 
-        public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction)
+        public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)
         {
             if (Main.netMode == 1)
             {
@@ -29,11 +29,11 @@ namespace MagicStorage.Components
             return id;
         }
 
-        public static int Hook_AfterPlacement_NoEntity(int i, int j, int type, int style, int direction)
+        public static int Hook_AfterPlacement_NoEntity(int i, int j, int type, int style, int direction, int alternative)
         {
             if (Main.netMode == 1)
             {
-                NetMessage.SendTileRange(Main.myPlayer, i - 1, j - 1, 2, 2);
+                NetMessage.SendTileSquare(Main.myPlayer, i - 1, j - 1, 2, 2);
                 NetHelper.SendSearchAndRefresh(i - 1, j - 1);
                 return 0;
             }
@@ -86,13 +86,13 @@ namespace MagicStorage.Components
         public static IEnumerable<Point16> AdjacentComponents(Point16 point)
         {
             List<Point16> points = new List<Point16>();
-            bool isConnector = Main.tile[point.X, point.Y].type == MagicStorage.Instance.TileType("StorageConnector");
+            bool isConnector = Main.tile[point.X, point.Y].type == ModContent.TileType<StorageConnector>();
             foreach (Point16 add in (isConnector ? checkNeighbors1x1 : checkNeighbors))
             {
                 int checkX = point.X + add.X;
                 int checkY = point.Y + add.Y;
                 Tile tile = Main.tile[checkX, checkY];
-                if (!tile.active())
+                if (!tile.IsActive)
                 {
                     continue;
                 }
@@ -112,7 +112,7 @@ namespace MagicStorage.Components
                         points.Add(check);
                     }
                 }
-                else if (tile.type == MagicStorage.Instance.TileType("StorageConnector"))
+                else if (tile.type == ModContent.TileType<StorageConnector>())
                 {
                     Point16 check = new Point16(checkX, checkY);
                     if (!points.Contains(check))

@@ -9,6 +9,7 @@ using Terraria.Localization;
 using Terraria.GameInput;
 using Terraria.ModLoader;
 using Terraria.UI;
+using Terraria.GameContent;
 
 namespace MagicStorage
 {
@@ -151,7 +152,7 @@ namespace MagicStorage
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
-            Texture2D texture = ModContent.GetTexture("MagicStorage/SearchBar");
+            Texture2D texture = ModContent.GetTexture("MagicStorage/SearchBar").Value;
             CalculatedStyle dim = GetDimensions();
             int innerWidth = (int)dim.Width - 2 * padding;
             int innerHeight = (int)dim.Height - 2 * padding;
@@ -167,7 +168,7 @@ namespace MagicStorage
 
             bool isEmpty = text.Length == 0;
             string drawText = isEmpty ? defaultText.Value : text;
-            DynamicSpriteFont font = Main.fontMouseText;
+            DynamicSpriteFont font = FontAssets.MouseText.Value;
             Vector2 size = font.MeasureString(drawText);
             float scale = innerHeight / size.Y;
             if (isEmpty && hasFocus)

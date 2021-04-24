@@ -21,7 +21,7 @@ namespace MagicStorage.Components
 
         public override bool ValidTile(Tile tile)
         {
-            return tile.type == mod.TileType("CreativeStorageUnit") && tile.frameX == 0 && tile.frameY == 0;
+            return tile.type == ModContent.TileType<CreativeStorageUnit>() && tile.frameX == 0 && tile.frameY == 0;
         }
 
         public override bool HasSpaceInStackFor(Item check, bool locked = false)
@@ -87,10 +87,10 @@ namespace MagicStorage.Components
         {
             get
             {
-                Item item = new Item();
-                item.SetDefaults(id, true);
-                item.stack = item.maxStack;
-                return item;
+                Item Item = new Item();
+                Item.SetDefaults(id, true);
+                Item.stack = Item.maxStack;
+                return Item;
             }
         }
 

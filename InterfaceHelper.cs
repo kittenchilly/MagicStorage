@@ -12,11 +12,11 @@ namespace MagicStorage
 {
     public static class InterfaceHelper
     {
-        private static FieldInfo _itemIconCacheTimeInfo;
+        private static FieldInfo _ItemIconCacheTimeInfo;
 
         public static void Initialize()
         {
-            _itemIconCacheTimeInfo = typeof(Main).GetField("_itemIconCacheTime", BindingFlags.NonPublic | BindingFlags.Static);
+            _ItemIconCacheTimeInfo = typeof(Main).GetField("_ItemIconCacheTime", BindingFlags.NonPublic | BindingFlags.Static);
         }
 
         public static void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -34,23 +34,23 @@ namespace MagicStorage
         public static bool DrawStorageGUI()
         {
             Player player = Main.player[Main.myPlayer];
-            StoragePlayer modPlayer = player.GetModPlayer<StoragePlayer>();
-            Point16 storageAccess = modPlayer.ViewingStorage();
+            StoragePlayer ModPlayer = player.GetModPlayer<StoragePlayer>();
+            Point16 storageAccess = ModPlayer.ViewingStorage();
             if (!Main.playerInventory || storageAccess.X < 0 || storageAccess.Y < 0)
             {
                 return true;
             }
-            ModTile modTile = TileLoader.GetTile(Main.tile[storageAccess.X, storageAccess.Y].type);
-            if (modTile == null || !(modTile is StorageAccess))
+            ModTile ModTile = TileLoader.GetTile(Main.tile[storageAccess.X, storageAccess.Y].type);
+            if (ModTile == null || !(ModTile is StorageAccess))
             {
                 return true;
             }
-            TEStorageHeart heart = ((StorageAccess)modTile).GetHeart(storageAccess.X, storageAccess.Y);
+            TEStorageHeart heart = ((StorageAccess)ModTile).GetHeart(storageAccess.X, storageAccess.Y);
             if (heart == null)
             {
                 return true;
             }
-            if (modTile is CraftingAccess)
+            if (ModTile is CraftingAccess)
             {
                 CraftingGUI.Draw(heart);
             }
@@ -63,7 +63,7 @@ namespace MagicStorage
 
         public static void HideItemIconCache()
         {
-            _itemIconCacheTimeInfo.SetValue(null, 0);
+            _ItemIconCacheTimeInfo.SetValue(null, 0);
         }
 
         public static Rectangle GetFullRectangle(UIElement element)
